@@ -591,473 +591,817 @@
 
 
 
-<!-- =====================================
-     CALCULATOR
-===================================== -->
-
-<section class="section calculator-section" id="kalkulator">
+<!-- =====================================================
+     SAFEERA SMART CALCULATOR V2
+====================================================== -->
+<section class="section calculator-section" id="calculator">
 
   <div class="container">
 
-    <div class="calculator-heading">
+    <div class="calculator-v2-heading reveal">
+      <span class="section-label">SAFEERA SMART ESTIMATOR</span>
 
-      <div>
-
-        <div class="eyebrow gold-eyebrow">
-          <span></span>
-          KALKULATOR SAFEERA
-        </div>
-
-        <h2>
-          Rancang perjalanan
-          <em>sesuai kebutuhanmu.</em>
-        </h2>
-
-      </div>
-
+      <h2>
+        Susun Umrah Sesuai
+        <span>Kebutuhan Anda.</span>
+      </h2>
 
       <p>
-        Pilih jumlah jamaah dan layanan. Kalkulator akan
-        memberikan estimasi awal yang dapat langsung
-        dikirim ke WhatsApp Safeera.
+        Pilih layanan yang Anda perlukan.
+        Bisa visa saja, hotel saja, transportasi,
+        mutawwif, atau Full Land Arrangement.
       </p>
-
     </div>
 
 
+    <div class="calc-v2-layout">
 
-    <div class="calculator-shell">
+      <!-- =========================
+           LEFT
+      ========================== -->
+      <div class="calc-v2-builder reveal">
 
-      <!-- LEFT -->
+        <!-- MODE -->
+        <div class="calc-step">
 
-      <div class="calculator-form">
-
-
-        <div class="calculator-section-title">
-
-          <span>01</span>
-
-          <div>
-            <strong>Jumlah Jamaah</strong>
-            <small>Atur jumlah peserta perjalanan</small>
-          </div>
-
-        </div>
-
-
-
-        <div class="traveller-grid">
-
-          <div class="counter-box">
-
-            <label>DEWASA</label>
-
-            <div class="counter">
-
-              <button onclick="changeCounter('adult', -1)">−</button>
-
-              <strong id="adultCount">2</strong>
-
-              <button onclick="changeCounter('adult', 1)">+</button>
-
-            </div>
-
-            <small>12+ tahun</small>
-
-          </div>
-
-
-          <div class="counter-box">
-
-            <label>ANAK</label>
-
-            <div class="counter">
-
-              <button onclick="changeCounter('child', -1)">−</button>
-
-              <strong id="childCount">0</strong>
-
-              <button onclick="changeCounter('child', 1)">+</button>
-
-            </div>
-
-            <small>2–11 tahun</small>
-
-          </div>
-
-
-          <div class="counter-box">
-
-            <label>BAYI</label>
-
-            <div class="counter">
-
-              <button onclick="changeCounter('infant', -1)">−</button>
-
-              <strong id="infantCount">0</strong>
-
-              <button onclick="changeCounter('infant', 1)">+</button>
-
-            </div>
-
-            <small>&lt; 2 tahun</small>
-
-          </div>
-
-        </div>
-
-
-
-        <div class="form-divider"></div>
-
-
-
-        <div class="calculator-section-title">
-
-          <span>02</span>
-
-          <div>
-            <strong>Pilih Visa</strong>
-            <small>Harga per jamaah</small>
-          </div>
-
-        </div>
-
-
-        <div class="choice-grid">
-
-          <label class="choice-card">
-
-            <input
-              type="radio"
-              name="visa"
-              value="2500000"
-              data-label="Visa Only"
-              checked
-            >
+          <div class="calc-step-head">
+            <span class="calc-step-number">01</span>
 
             <div>
+              <h3>Tipe Perjalanan</h3>
+              <p>Pilih jenis kebutuhan perjalanan.</p>
+            </div>
+          </div>
+
+          <div class="calc-mode-grid">
+
+            <button
+              type="button"
+              class="calc-mode active"
+              data-mode="mandiri"
+            >
+              <i class="fa-solid fa-kaaba"></i>
+
+              <span>
+                <strong>Umrah Mandiri</strong>
+                <small>Individual & keluarga</small>
+              </span>
+            </button>
+
+
+            <button
+              type="button"
+              class="calc-mode"
+              data-mode="group"
+            >
+              <i class="fa-solid fa-users"></i>
+
+              <span>
+                <strong>LA Group</strong>
+                <small>Travel & rombongan</small>
+              </span>
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- JAMAAH -->
+        <div class="calc-step">
+
+          <div class="calc-step-head">
+            <span class="calc-step-number">02</span>
+
+            <div>
+              <h3>Jumlah Jamaah</h3>
+              <p>
+                Hotel dan biaya group otomatis
+                menyesuaikan jumlah jamaah.
+              </p>
+            </div>
+          </div>
+
+
+          <div class="pax-control">
+
+            <button
+              type="button"
+              id="paxMinus"
+              aria-label="Kurangi jamaah"
+            >
+              −
+            </button>
+
+            <div class="pax-number">
+              <strong id="paxDisplay">2</strong>
+              <span>jamaah</span>
+            </div>
+
+            <button
+              type="button"
+              id="paxPlus"
+              aria-label="Tambah jamaah"
+            >
+              +
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- SERVICES -->
+        <div class="calc-step">
+
+          <div class="calc-step-head">
+
+            <span class="calc-step-number">03</span>
+
+            <div>
+              <h3>Pilih Layanan</h3>
+              <p>
+                Aktifkan hanya layanan yang Anda perlukan.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="service-selector">
+
+            <button
+              type="button"
+              class="calc-service active"
+              data-calc-service="visa"
+            >
               <i class="fa-solid fa-passport"></i>
-              <strong>Visa Only</strong>
-              <small>Rp 2.500.000 / pax</small>
-            </div>
+              <strong>Visa</strong>
+              <span class="service-check">
+                <i class="fa-solid fa-check"></i>
+              </span>
+            </button>
 
-          </label>
 
-
-          <label class="choice-card">
-
-            <input
-              type="radio"
-              name="visa"
-              value="2850000"
-              data-label="Visa + Siskopatuh"
+            <button
+              type="button"
+              class="calc-service active"
+              data-calc-service="hotel"
             >
-
-            <div>
-              <i class="fa-solid fa-shield"></i>
-              <strong>Visa + Siskopatuh</strong>
-              <small>Rp 2.850.000 / pax</small>
-            </div>
-
-          </label>
+              <i class="fa-solid fa-hotel"></i>
+              <strong>Hotel</strong>
+              <span class="service-check">
+                <i class="fa-solid fa-check"></i>
+              </span>
+            </button>
 
 
-          <label class="choice-card">
-
-            <input
-              type="radio"
-              name="visa"
-              value="4999999"
-              data-label="Visa Istifadhah"
+            <button
+              type="button"
+              class="calc-service active"
+              data-calc-service="transport"
             >
-
-            <div>
-              <i class="fa-solid fa-earth-asia"></i>
-              <strong>Visa Istifadhah</strong>
-              <small>Rp 4.999.999 / pax</small>
-            </div>
-
-          </label>
-
-        </div>
+              <i class="fa-solid fa-bus"></i>
+              <strong>Transport</strong>
+              <span class="service-check">
+                <i class="fa-solid fa-check"></i>
+              </span>
+            </button>
 
 
-
-        <div class="form-divider"></div>
-
-
-
-        <div class="calculator-section-title">
-
-          <span>03</span>
-
-          <div>
-            <strong>Hotel</strong>
-            <small>Pilih lama menginap & kategori</small>
-          </div>
-
-        </div>
-
-
-        <div class="hotel-night-grid">
-
-          <div class="field">
-
-            <label>Makkah</label>
-
-            <select id="makkahNights">
-              <option value="0">Tidak perlu</option>
-              <option value="3">3 malam</option>
-              <option value="4">4 malam</option>
-              <option value="5" selected>5 malam</option>
-              <option value="6">6 malam</option>
-              <option value="7">7 malam</option>
-              <option value="8">8 malam</option>
-              <option value="10">10 malam</option>
-            </select>
-
-          </div>
-
-
-          <div class="field">
-
-            <label>Madinah</label>
-
-            <select id="madinahNights">
-              <option value="0">Tidak perlu</option>
-              <option value="3">3 malam</option>
-              <option value="4" selected>4 malam</option>
-              <option value="5">5 malam</option>
-              <option value="6">6 malam</option>
-              <option value="7">7 malam</option>
-              <option value="8">8 malam</option>
-            </select>
-
-          </div>
-
-        </div>
-
-
-        <div class="hotel-category">
-
-          <label class="category-choice">
-
-            <input
-              type="radio"
-              name="hotelCategory"
-              value="350000"
-              data-label="Budget"
-              checked
+            <button
+              type="button"
+              class="calc-service"
+              data-calc-service="mutawwif"
             >
+              <i class="fa-solid fa-user-group"></i>
+              <strong>Mutawwif</strong>
+              <span class="service-check">
+                <i class="fa-solid fa-check"></i>
+              </span>
+            </button>
 
-            <span>Budget</span>
 
-          </label>
-
-
-          <label class="category-choice">
-
-            <input
-              type="radio"
-              name="hotelCategory"
-              value="550000"
-              data-label="Dekat"
+            <button
+              type="button"
+              class="calc-service"
+              data-calc-service="handling"
             >
+              <i class="fa-solid fa-suitcase-rolling"></i>
+              <strong>Handling</strong>
+              <span class="service-check">
+                <i class="fa-solid fa-check"></i>
+              </span>
+            </button>
 
-            <span>Dekat</span>
 
-          </label>
-
-
-          <label class="category-choice">
-
-            <input
-              type="radio"
-              name="hotelCategory"
-              value="850000"
-              data-label="Premium"
+            <button
+              type="button"
+              class="calc-service"
+              data-calc-service="ziarah"
             >
-
-            <span>Premium ★</span>
-
-          </label>
-
-        </div>
-
-
-
-        <div class="form-divider"></div>
-
-
-
-        <div class="calculator-section-title">
-
-          <span>04</span>
-
-          <div>
-            <strong>Transportasi</strong>
-            <small>Pilih kebutuhan transport Saudi</small>
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <select id="transportType">
-
-            <option value="0" data-label="Tanpa transport">
-              Tanpa transport
-            </option>
-
-            <option value="750000" data-label="Shared Transport">
-              Shared Transport — estimasi Rp 750.000 / pax
-            </option>
-
-            <option value="1250000" data-label="Private Transport">
-              Private Transport — estimasi Rp 1.250.000 / pax
-            </option>
-
-          </select>
-
-        </div>
-
-
-
-        <div class="addon-grid">
-
-
-          <label class="addon">
-
-            <input
-              type="checkbox"
-              id="mutawwifAddon"
-              value="1320000"
-            >
-
-            <span class="custom-check"></span>
-
-            <div>
-              <strong>Mutawwif / Guide</strong>
-              <small>Rp 1.320.000 / hari</small>
-            </div>
-
-          </label>
-
-
-          <label class="addon">
-
-            <input
-              type="checkbox"
-              id="handlingAddon"
-              value="350000"
-            >
-
-            <span class="custom-check"></span>
-
-            <div>
-              <strong>Handling Jamaah</strong>
-              <small>Estimasi Rp 350.000 / pax</small>
-            </div>
-
-          </label>
-
-
-          <label class="addon">
-
-            <input
-              type="checkbox"
-              id="haramainAddon"
-              value="750000"
-            >
-
-            <span class="custom-check"></span>
-
-            <div>
-              <strong>Kereta Haramain</strong>
-              <small>Estimasi Rp 750.000 / pax</small>
-            </div>
-
-          </label>
-
-
-          <label class="addon">
-
-            <input
-              type="checkbox"
-              id="ziarahAddon"
-              value="400000"
-            >
-
-            <span class="custom-check"></span>
-
-            <div>
+              <i class="fa-solid fa-location-dot"></i>
               <strong>Ziarah</strong>
-              <small>Estimasi Rp 400.000 / pax</small>
+              <span class="service-check">
+                <i class="fa-solid fa-check"></i>
+              </span>
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- VISA OPTIONS -->
+        <div
+          class="calc-options active"
+          id="optionVisa"
+        >
+
+          <div class="option-title">
+            <div>
+              <span>VISA</span>
+              <h4>Pilihan Visa</h4>
             </div>
 
+            <i class="fa-solid fa-passport"></i>
+          </div>
+
+
+          <div class="option-card-grid">
+
+            <label class="radio-card active">
+
+              <input
+                type="radio"
+                name="visaType"
+                value="only"
+                checked
+              >
+
+              <span class="radio-circle"></span>
+
+              <span>
+                <strong>Visa Only</strong>
+                <small>Rp2.500.000 / pax</small>
+              </span>
+
+            </label>
+
+
+            <label class="radio-card">
+
+              <input
+                type="radio"
+                name="visaType"
+                value="siskopatuh"
+              >
+
+              <span class="radio-circle"></span>
+
+              <span>
+                <strong>Visa + Siskopatuh</strong>
+                <small>Rp2.850.000 / pax</small>
+              </span>
+
+            </label>
+
+          </div>
+
+        </div>
+
+
+        <!-- HOTEL OPTIONS -->
+        <div
+          class="calc-options active"
+          id="optionHotel"
+        >
+
+          <div class="option-title">
+
+            <div>
+              <span>HOTEL</span>
+              <h4>Akomodasi</h4>
+            </div>
+
+            <i class="fa-solid fa-hotel"></i>
+
+          </div>
+
+
+          <div class="hotel-calc-grid">
+
+            <!-- MAKKAH -->
+            <div class="hotel-calc-box">
+
+              <div class="hotel-calc-city">
+                <span>MAKKAH</span>
+                <strong>Hotel Makkah</strong>
+              </div>
+
+
+              <label>
+                Kategori
+
+                <select id="makkahHotel">
+                  <option value="765600">
+                    Budget — Rp765.600
+                  </option>
+
+                  <option value="950400">
+                    Comfort — Rp950.400
+                  </option>
+
+                  <option value="1742400">
+                    Premium — Rp1.742.400
+                  </option>
+
+                  <option value="2508000">
+                    Premium 5★ — Rp2.508.000
+                  </option>
+                </select>
+              </label>
+
+
+              <label>
+                Jumlah malam
+
+                <div class="mini-counter">
+
+                  <button
+                    type="button"
+                    data-counter-minus="makkahNights"
+                  >
+                    −
+                  </button>
+
+                  <input
+                    id="makkahNights"
+                    type="number"
+                    value="5"
+                    min="0"
+                    max="30"
+                  >
+
+                  <button
+                    type="button"
+                    data-counter-plus="makkahNights"
+                  >
+                    +
+                  </button>
+
+                </div>
+              </label>
+
+            </div>
+
+
+            <!-- MADINAH -->
+            <div class="hotel-calc-box">
+
+              <div class="hotel-calc-city">
+                <span>MADINAH</span>
+                <strong>Hotel Madinah</strong>
+              </div>
+
+
+              <label>
+                Kategori
+
+                <select id="madinahHotel">
+
+                  <option value="1240800">
+                    Budget — Rp1.240.800
+                  </option>
+
+                  <option value="1372800">
+                    Golden Tulip — Rp1.372.800
+                  </option>
+
+                  <option value="1478400">
+                    Comfort — Rp1.478.400
+                  </option>
+
+                  <option value="1716000">
+                    Premium — Rp1.716.000
+                  </option>
+
+                </select>
+              </label>
+
+
+              <label>
+                Jumlah malam
+
+                <div class="mini-counter">
+
+                  <button
+                    type="button"
+                    data-counter-minus="madinahNights"
+                  >
+                    −
+                  </button>
+
+                  <input
+                    id="madinahNights"
+                    type="number"
+                    value="4"
+                    min="0"
+                    max="30"
+                  >
+
+                  <button
+                    type="button"
+                    data-counter-plus="madinahNights"
+                  >
+                    +
+                  </button>
+
+                </div>
+
+              </label>
+
+            </div>
+
+          </div>
+
+
+          <div class="room-type-area">
+
+            <span class="input-label">
+              Tipe kamar
+            </span>
+
+            <div class="room-buttons">
+
+              <button
+                type="button"
+                class="room-type"
+                data-capacity="2"
+              >
+                Double
+                <small>2 pax</small>
+              </button>
+
+
+              <button
+                type="button"
+                class="room-type"
+                data-capacity="3"
+              >
+                Triple
+                <small>3 pax</small>
+              </button>
+
+
+              <button
+                type="button"
+                class="room-type active"
+                data-capacity="4"
+              >
+                Quad
+                <small>4 pax</small>
+              </button>
+
+            </div>
+
+            <p class="room-note">
+              Sistem menghitung jumlah kamar berdasarkan
+              kapasitas kamar dan jumlah jamaah.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- TRANSPORT -->
+        <div
+          class="calc-options active"
+          id="optionTransport"
+        >
+
+          <div class="option-title">
+
+            <div>
+              <span>TRANSPORT</span>
+              <h4>Transportasi Saudi</h4>
+            </div>
+
+            <i class="fa-solid fa-bus"></i>
+
+          </div>
+
+
+          <label class="full-input">
+            Paket transportasi
+
+            <select id="calcTransport">
+
+              <option value="shared">
+                Shared / Budget
+              </option>
+
+              <option value="private">
+                Private Car
+              </option>
+
+              <option value="hiace">
+                Hiace / Van
+              </option>
+
+              <option value="bus">
+                Bus Group
+              </option>
+
+            </select>
           </label>
+
+
+          <div class="route-list">
+
+            <div>
+              <i class="fa-solid fa-plane-arrival"></i>
+              Jeddah Airport → Makkah
+            </div>
+
+            <div>
+              <i class="fa-solid fa-route"></i>
+              Makkah → Madinah
+            </div>
+
+            <div>
+              <i class="fa-solid fa-plane-departure"></i>
+              Madinah → Airport
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- MUTAWIF -->
+        <div
+          class="calc-options"
+          id="optionMutawwif"
+        >
+
+          <div class="option-title">
+
+            <div>
+              <span>MUTAWWIF</span>
+              <h4>Pendamping Jamaah</h4>
+            </div>
+
+            <i class="fa-solid fa-user-group"></i>
+
+          </div>
+
+
+          <div class="group-price-info">
+
+            <div>
+              <span>Tarif</span>
+              <strong>Rp1.320.000</strong>
+              <small>/ hari / group</small>
+            </div>
+
+            <div>
+              <span>Jumlah hari</span>
+
+              <div class="mini-counter">
+
+                <button
+                  type="button"
+                  data-counter-minus="mutawwifDays"
+                >
+                  −
+                </button>
+
+                <input
+                  id="mutawwifDays"
+                  type="number"
+                  value="1"
+                  min="1"
+                  max="30"
+                >
+
+                <button
+                  type="button"
+                  data-counter-plus="mutawwifDays"
+                >
+                  +
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <p class="calc-hint">
+            Biaya Mutawwif dihitung per group kemudian
+            dibagi jumlah jamaah.
+          </p>
+
+        </div>
+
+
+        <!-- HANDLING -->
+        <div
+          class="calc-options"
+          id="optionHandling"
+        >
+
+          <div class="option-title">
+
+            <div>
+              <span>HANDLING</span>
+              <h4>Handling Jamaah</h4>
+            </div>
+
+            <i class="fa-solid fa-suitcase-rolling"></i>
+
+          </div>
+
+
+          <div class="addon-grid">
+
+            <label class="addon-card">
+
+              <input
+                type="checkbox"
+                class="handling-addon"
+                value="arrival"
+                checked
+              >
+
+              <span>
+                <strong>Arrival Handling</strong>
+                <small>Airport arrival</small>
+              </span>
+
+            </label>
+
+
+            <label class="addon-card">
+
+              <input
+                type="checkbox"
+                class="handling-addon"
+                value="hotel"
+              >
+
+              <span>
+                <strong>Hotel Handling</strong>
+                <small>Check-in & check-out</small>
+              </span>
+
+            </label>
+
+
+            <label class="addon-card">
+
+              <input
+                type="checkbox"
+                class="handling-addon"
+                value="departure"
+              >
+
+              <span>
+                <strong>Departure Handling</strong>
+                <small>Airport departure</small>
+              </span>
+
+            </label>
+
+          </div>
+
+        </div>
+
+
+        <!-- ZIARAH -->
+        <div
+          class="calc-options"
+          id="optionZiarah"
+        >
+
+          <div class="option-title">
+
+            <div>
+              <span>ZIARAH</span>
+              <h4>Program Ziarah</h4>
+            </div>
+
+            <i class="fa-solid fa-location-dot"></i>
+
+          </div>
+
+
+          <div class="option-card-grid">
+
+            <label class="addon-card">
+
+              <input
+                type="checkbox"
+                class="ziarah-addon"
+                value="makkah"
+                checked
+              >
+
+              <span>
+                <strong>Ziarah Makkah</strong>
+                <small>Program city tour</small>
+              </span>
+
+            </label>
+
+
+            <label class="addon-card">
+
+              <input
+                type="checkbox"
+                class="ziarah-addon"
+                value="madinah"
+              >
+
+              <span>
+                <strong>Ziarah Madinah</strong>
+                <small>Program city tour</small>
+              </span>
+
+            </label>
+
+          </div>
+
+        </div>
+
+
+        <!-- DISCLAIMER -->
+        <div class="calc-disclaimer">
+
+          <i class="fa-solid fa-circle-info"></i>
+
+          <p>
+            Estimasi bersifat indikatif.
+            Harga hotel, transportasi dan layanan dapat
+            berubah sesuai tanggal perjalanan,
+            musim, ketersediaan, dan jumlah jamaah.
+          </p>
 
         </div>
 
       </div>
 
 
-
-      <!-- RESULT -->
-
-      <aside class="calculator-result">
+      <!-- =========================
+           RIGHT RESULT
+      ========================== -->
+      <aside class="calc-v2-result reveal">
 
         <div class="result-top">
 
-          <span>ESTIMASI PERJALANAN</span>
+          <span>SAFEERA ESTIMATE</span>
 
-          <h3 id="pricePerPerson">
-            Rp 0
-          </h3>
-
-          <small>estimasi per jamaah dewasa</small>
+          <div class="result-status">
+            LIVE
+          </div>
 
         </div>
 
 
-        <div class="result-divider"></div>
-
-
-        <div class="result-details">
+        <div class="result-trip">
 
           <div>
-            <span>Jumlah jamaah</span>
-            <strong id="summaryTravellers">2 pax</strong>
+            <small>TIPE PERJALANAN</small>
+            <strong id="resultMode">
+              Umrah Mandiri
+            </strong>
           </div>
 
           <div>
-            <span>Visa</span>
-            <strong id="summaryVisa">Rp 0</strong>
+            <small>JAMAAH</small>
+            <strong>
+              <span id="resultPax">2</span> Pax
+            </strong>
           </div>
 
-          <div>
-            <span>Hotel</span>
-            <strong id="summaryHotel">Rp 0</strong>
-          </div>
+        </div>
 
-          <div>
-            <span>Transport</span>
-            <strong id="summaryTransport">Rp 0</strong>
-          </div>
 
-          <div>
-            <span>Add-on</span>
-            <strong id="summaryAddon">Rp 0</strong>
-          </div>
+        <div
+          class="result-breakdown"
+          id="resultBreakdown"
+        >
+
+          <!-- Generated by JS -->
 
         </div>
 
 
         <div class="result-total">
 
-          <small>TOTAL ESTIMASI</small>
+          <span>TOTAL ESTIMASI</span>
 
           <strong id="grandTotal">
             Rp 0
@@ -1066,26 +1410,42 @@
         </div>
 
 
-        <p class="estimate-note">
-          *Harga hotel dan transport di kalkulator merupakan
-          estimasi sementara dan dapat berubah berdasarkan tanggal,
-          ketersediaan, jumlah jamaah dan pilihan layanan.
-        </p>
+        <div class="result-per-pax">
+
+          <span>ESTIMASI / PAX</span>
+
+          <strong id="perPaxTotal">
+            Rp 0
+          </strong>
+
+        </div>
 
 
-        <button class="result-button" onclick="sendEstimateToWhatsApp()">
+        <div class="result-note">
+          Estimasi awal dalam Rupiah.
+          Harga final dikonfirmasi oleh tim Safeera.
+        </div>
 
-          Kirim Estimasi ke WhatsApp
 
+        <button
+          type="button"
+          class="result-wa-button"
+          id="calculatorWhatsapp"
+        >
           <i class="fa-brands fa-whatsapp"></i>
 
+          Minta Penawaran
         </button>
 
 
-        <a href="#visa" class="result-secondary">
-          Lihat rincian layanan
-          <i class="fa-solid fa-arrow-down"></i>
-        </a>
+        <button
+          type="button"
+          class="result-reset-button"
+          id="calculatorReset"
+        >
+          <i class="fa-solid fa-rotate-left"></i>
+          Reset Kalkulator
+        </button>
 
       </aside>
 
@@ -1094,6 +1454,7 @@
   </div>
 
 </section>
+
 
 
 
