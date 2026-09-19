@@ -1,3364 +1,1667 @@
-<!DOCTYPE html>
-<html lang="id">
+/* =========================================================
+   SAFEERA.COM — CLEAN SCRIPT
+   Website Core + Smart Calculator V2
+========================================================= */
+
+"use strict";
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* =======================================================
+     CONFIG
+  ======================================================= */
+
+  // Isi nomor WhatsApp Safeera nanti.
+  // Format: kode negara + nomor, TANPA +, spasi, atau strip.
+  // Contoh format saja: 9665xxxxxxxx
+  const SAFEERA_WHATSAPP = "";
+
+  const PRICES = {
+    visa: {
+      only: 2500000,
+      siskopatuh: 2850000
+    },
+
+    mutawwifPerDay: 1320000,
+
+    // Belum ada harga final → tidak dimasukkan ke total.
+    transport: {
+      shared: {
+        label: "Shared / Budget",
+        type: "perPax",
+        price: 0
+      },
+      private: {
+        label: "Private Car",
+        type: "group",
+        price: 0
+      },
+      hiace: {
+        label: "Hiace / Van",
+        type: "group",
+        price: 0
+      },
+      bus: {
+        label: "Bus Group",
+        type: "group",
+        price: 0
+      }
+    },
+
+    handling: {
+      arrival: {
+        label: "Arrival Handling",
+        type: "group",
+        price: 0
+      },
+      hotel: {
+        label: "Hotel Handling",
+        type: "group",
+        price: 0
+      },
+      departure: {
+        label: "Departure Handling",
+        type: "group",
+        price: 0
+      }
+    },
+
+    ziarah: {
+      makkah: {
+        label: "Ziarah Makkah",
+        type: "group",
+        price: 0
+      },
+      madinah: {
+        label: "Ziarah Madinah",
+        type: "group",
+        price: 0
+      }
+    }
+  };
+
+
+  /* =======================================================
+     HELPERS
+  ======================================================= */
+
+  const $ = (selector, parent = document) =>
+    parent.querySelector(selector);
+
+  const $$ = (selector, parent = document) =>
+    [...parent.querySelectorAll(selector)];
+
+  function money(value) {
+    const number = Number(value) || 0;
+
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      maximumFractionDigits: 0
+    }).format(number);
+  }
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  function escapeHTML(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
 
-  <title>Safeera Madinah | Umroh & Land Arrangement Saudi Arabia</title>
+  function openWhatsApp(message) {
+    const text = encodeURIComponent(message);
 
-  <meta name="description"
-    content="Safeera Madinah menyediakan layanan Visa Umroh, Land Arrangement, Hotel Makkah dan Madinah, transportasi Saudi, Mutawwif, Haramain dan kebutuhan perjalanan Umroh.">
+    const number = SAFEERA_WHATSAPP.replace(/\D/g, "");
 
-  <meta name="theme-color" content="#063d32">
+    const url = number
+      ? `https://wa.me/${number}?text=${text}`
+      : `https://wa.me/?text=${text}`;
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
 
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
-    rel="stylesheet">
 
-  <!-- Icons -->
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  /* =======================================================
+     PRELOADER
+  ======================================================= */
 
-  <link rel="stylesheet" href="style.css">
-</head>
+  const preloader = $("#preloader");
 
+  window.addEventListener("load", () => {
+    if (!preloader) return;
 
-<body>
+    setTimeout(() => {
+      preloader.classList.add("hide");
+    }, 250);
+  });
 
+  // Fallback kalau event load sudah lewat.
+  if (document.readyState === "complete" && preloader) {
+    preloader.classList.add("hide");
+  }
 
-<!-- =====================================
-     TOP BAR
-===================================== -->
 
-<div class="topbar">
+  /* =======================================================
+     CURRENT YEAR
+  ======================================================= */
 
-  <div class="container topbar-inner">
+  const year = $("#currentYear");
 
-    <div class="topbar-left">
-      <span>
-        <i class="fa-solid fa-location-dot"></i>
-        Madinah • Saudi Arabia
-      </span>
+  if (year) {
+    year.textContent = new Date().getFullYear();
+  }
 
-      <span class="desktop-only">
-        <i class="fa-solid fa-location-dot"></i>
-        Depok • Indonesia
-      </span>
-    </div>
 
+  /* =======================================================
+     HEADER ON SCROLL
+  ======================================================= */
 
-    <div class="topbar-right">
+  const header = $("#header");
 
-      <a href="https://wa.me/6282165870953" target="_blank">
-        <i class="fa-brands fa-whatsapp"></i>
-        +62 821-6587-0953
-      </a>
+  function updateHeader() {
+    if (!header) return;
 
-      <span class="desktop-only">
-        Journey • Hospitality • A Higher Meaning
-      </span>
+    header.classList.toggle(
+      "scrolled",
+      window.scrollY > 20
+    );
+  }
 
-    </div>
+  updateHeader();
 
-  </div>
+  window.addEventListener(
+    "scroll",
+    updateHeader,
+    { passive: true }
+  );
 
-</div>
 
+  /* =======================================================
+     MOBILE MENU
+  ======================================================= */
 
+  const mobileToggle = $("#mobileToggle");
+  const mobileMenu = $("#mobileMenu");
+  const mobileClose = $("#mobileClose");
+  const mobileOverlay = $("#mobileOverlay");
 
-<!-- =====================================
-     NAVBAR
-===================================== -->
+  function openMobileMenu() {
+    if (!mobileMenu) return;
 
-<header class="navbar" id="navbar">
+    mobileMenu.classList.add("open");
 
-  <div class="container nav-inner">
+    if (mobileOverlay) {
+      mobileOverlay.classList.add("show");
+    }
 
-    <a href="#home" class="brand">
+    document.body.classList.add("no-scroll");
+  }
 
-      <div class="brand-mark">
-        S
-      </div>
+  function closeMobileMenu() {
+    if (!mobileMenu) return;
 
-      <div class="brand-name">
-        <strong>SAFEERA</strong>
-        <span>MADINAH</span>
-      </div>
+    mobileMenu.classList.remove("open");
 
-    </a>
+    if (mobileOverlay) {
+      mobileOverlay.classList.remove("show");
+    }
 
+    document.body.classList.remove("no-scroll");
+  }
 
-    <nav class="nav-links" id="navLinks">
+  mobileToggle?.addEventListener(
+    "click",
+    openMobileMenu
+  );
 
-      <a href="#home">Beranda</a>
+  mobileClose?.addEventListener(
+    "click",
+    closeMobileMenu
+  );
 
+  mobileOverlay?.addEventListener(
+    "click",
+    closeMobileMenu
+  );
 
-      <div class="nav-dropdown">
+  $$("a", mobileMenu || document).forEach(link => {
+    link.addEventListener("click", () => {
+      const href = link.getAttribute("href") || "";
 
-        <button class="dropdown-trigger">
-          Layanan
-          <i class="fa-solid fa-chevron-down"></i>
-        </button>
+      if (href.startsWith("#")) {
+        closeMobileMenu();
+      }
+    });
+  });
 
-        <div class="dropdown-menu">
 
-          <a href="#visa">
-            <i class="fa-solid fa-passport"></i>
-            <div>
-              <strong>Visa Umroh</strong>
-              <small>Visa only & Siskopatuh</small>
-            </div>
-          </a>
+  /* =======================================================
+     MOBILE SERVICE SUBMENU
+  ======================================================= */
 
-          <a href="#la">
-            <i class="fa-solid fa-kaaba"></i>
-            <div>
-              <strong>Land Arrangement</strong>
-              <small>Layanan lengkap di Saudi</small>
-            </div>
-          </a>
+  $$(".mobile-service-toggle").forEach(button => {
+    button.addEventListener("click", () => {
+      const submenu =
+        button.nextElementSibling;
 
-          <a href="#hotel">
-            <i class="fa-solid fa-hotel"></i>
-            <div>
-              <strong>Hotel</strong>
-              <small>Makkah & Madinah</small>
-            </div>
-          </a>
+      if (!submenu) return;
 
-          <a href="#transport">
-            <i class="fa-solid fa-bus"></i>
-            <div>
-              <strong>Transportasi</strong>
-              <small>Airport & antar kota</small>
-            </div>
-          </a>
+      submenu.classList.toggle("open");
+      button.classList.toggle("active");
+    });
+  });
 
-          <a href="#mutawwif">
-            <i class="fa-solid fa-person-walking-luggage"></i>
-            <div>
-              <strong>Mutawwif</strong>
-              <small>Guide Indonesia</small>
-            </div>
-          </a>
 
-          <a href="#lainnya">
-            <i class="fa-solid fa-circle-nodes"></i>
-            <div>
-              <strong>Layanan Lainnya</strong>
-              <small>Haramain, flight & ziarah</small>
-            </div>
-          </a>
+  /* =======================================================
+     SMOOTH INTERNAL LINKS
+  ======================================================= */
 
-        </div>
+  $$('a[href^="#"]').forEach(link => {
+    link.addEventListener("click", event => {
+      const href = link.getAttribute("href");
 
-      </div>
+      if (!href || href === "#") return;
 
+      const target = $(href);
 
-      <a href="#hotel">Hotel</a>
+      if (!target) return;
 
-      <a href="#transport">Transportasi</a>
+      event.preventDefault();
 
-      <a href="#kalkulator">Kalkulator</a>
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    });
+  });
 
-      <a href="#tentang">Tentang</a>
 
-      <a href="#faq">FAQ</a>
+  /* =======================================================
+     REVEAL ON SCROLL
+  ======================================================= */
 
-    </nav>
+  const revealElements = $$(".reveal");
 
+  if ("IntersectionObserver" in window) {
+    const revealObserver =
+      new IntersectionObserver(
+        entries => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
 
-    <div class="nav-actions">
+            entry.target.classList.add("visible");
+            revealObserver.unobserve(entry.target);
+          });
+        },
+        {
+          threshold: 0.08
+        }
+      );
 
-      <a href="#kalkulator" class="nav-calc desktop-only">
-        <i class="fa-solid fa-calculator"></i>
-      </a>
+    revealElements.forEach(element => {
+      revealObserver.observe(element);
+    });
+  } else {
+    revealElements.forEach(element => {
+      element.classList.add("visible");
+    });
+  }
 
-      <a href="https://wa.me/6282165870953"
-        target="_blank"
-        class="nav-cta desktop-only">
 
-        Konsultasi
+  /* =======================================================
+     BACK TO TOP
+  ======================================================= */
 
-        <i class="fa-brands fa-whatsapp"></i>
+  const backToTop = $("#backToTop");
 
-      </a>
+  function updateBackToTop() {
+    if (!backToTop) return;
 
-      <button class="menu-button" id="menuButton" aria-label="Menu">
-        <i class="fa-solid fa-bars"></i>
-      </button>
+    backToTop.classList.toggle(
+      "show",
+      window.scrollY > 500
+    );
+  }
 
-    </div>
+  updateBackToTop();
 
-  </div>
+  window.addEventListener(
+    "scroll",
+    updateBackToTop,
+    { passive: true }
+  );
 
-</header>
+  backToTop?.addEventListener("click", () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  });
 
 
+  /* =======================================================
+     HOTEL FILTER
+  ======================================================= */
 
-<!-- =====================================
-     HERO
-===================================== -->
+  const hotelFilterButtons =
+    $$(".hotel-filter-btn");
 
-<section class="hero" id="home">
+  const hotelCards =
+    $$(".hotel-card");
 
-  <div class="hero-pattern"></div>
+  hotelFilterButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      const filter =
+        button.dataset.filter || "all";
 
-  <div class="hero-glow hero-glow-one"></div>
-  <div class="hero-glow hero-glow-two"></div>
+      hotelFilterButtons.forEach(item => {
+        item.classList.remove("active");
+      });
 
+      button.classList.add("active");
 
-  <div class="container hero-grid">
+      hotelCards.forEach(card => {
+        const city =
+          card.dataset.city || "";
 
-    <div class="hero-copy">
+        const show =
+          filter === "all" ||
+          city === filter;
 
-      <div class="eyebrow light-eyebrow">
-        <span></span>
-        INDONESIA • SAUDI ARABIA
-      </div>
+        card.classList.toggle(
+          "hotel-hidden",
+          !show
+        );
+      });
+    });
+  });
 
 
-      <h1>
-        Perjalanan ke
-        <em>Tanah Suci,</em>
-        kami siapkan dengan lebih tenang.
-      </h1>
-
-
-      <p class="hero-subtitle">
-        Solusi kebutuhan Umroh & Land Arrangement dalam satu layanan.
-        Mulai visa, hotel Makkah–Madinah, transportasi, Mutawwif,
-        Haramain hingga handling jamaah di Arab Saudi.
-      </p>
-
-
-      <div class="hero-buttons">
-
-        <a href="#kalkulator" class="button gold-button">
-
-          Rencanakan Perjalanan
-
-          <i class="fa-solid fa-arrow-right"></i>
-
-        </a>
-
-
-        <a href="#layanan-cepat" class="button ghost-button">
-
-          Jelajahi Layanan
-
-          <i class="fa-solid fa-chevron-down"></i>
-
-        </a>
-
-      </div>
-
-
-      <div class="hero-trust">
-
-        <div class="trust-icons">
-
-          <span>
-            <i class="fa-solid fa-kaaba"></i>
-          </span>
-
-          <span>
-            <i class="fa-solid fa-hotel"></i>
-          </span>
-
-          <span>
-            <i class="fa-solid fa-plane"></i>
-          </span>
-
-        </div>
-
-        <div>
-          <div class="stars">★★★★★</div>
-          <small>
-            Mendampingi kebutuhan jamaah & travel
-          </small>
-        </div>
-
-      </div>
-
-    </div>
-
-
-
-    <!-- HERO VISUAL -->
-
-    <div class="hero-visual">
-
-      <div class="hero-logo-card">
-
-        <img
-          src="assets/safeera-logo.png"
-          alt="Safeera Madinah"
-          onerror="this.style.display='none'; document.querySelector('.logo-fallback').style.display='flex';"
-        >
-
-        <div class="logo-fallback">
-
-          <div class="fallback-s">S</div>
-
-          <strong>SAFEERA</strong>
-
-          <span>MADINAH</span>
-
-          <small>
-            JOURNEY • HOSPITALITY • A HIGHER MEANING
-          </small>
-
-        </div>
-
-      </div>
-
-
-      <div class="floating-card floating-card-one">
-
-        <div class="floating-icon">
-          <i class="fa-solid fa-shield-heart"></i>
-        </div>
-
-        <div>
-          <small>Safeera Support</small>
-          <strong>Indonesia & Saudi</strong>
-        </div>
-
-      </div>
-
-
-      <div class="floating-card floating-card-two">
-
-        <small>Mulai dari</small>
-
-        <strong>Rp 2.500.000</strong>
-
-        <span>Visa Umroh</span>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-
-  <!-- HERO STATS -->
-
-  <div class="container">
-
-    <div class="hero-stats">
-
-      <div class="hero-stat">
-        <strong>500+</strong>
-        <span>Jamaah</span>
-      </div>
-
-      <div class="hero-stat">
-        <strong>50+</strong>
-        <span>Grup Dilayani</span>
-      </div>
-
-      <div class="hero-stat">
-        <strong>2</strong>
-        <span>Negara Operasional</span>
-      </div>
-
-      <div class="hero-stat">
-        <strong>24/7</strong>
-        <span>Saudi Support</span>
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- =====================================
-     TICKER
-===================================== -->
-
-<div class="trust-ticker">
-
-  <div class="ticker-track">
-
-    <span>
-      <i class="fa-solid fa-circle-check"></i>
-      Visa Umroh
-    </span>
-
-    <span>•</span>
-
-    <span>
-      <i class="fa-solid fa-circle-check"></i>
-      Hotel Makkah & Madinah
-    </span>
-
-    <span>•</span>
-
-    <span>
-      <i class="fa-solid fa-circle-check"></i>
-      Land Arrangement
-    </span>
-
-    <span>•</span>
-
-    <span>
-      <i class="fa-solid fa-circle-check"></i>
-      Transport Saudi
-    </span>
-
-    <span>•</span>
-
-    <span>
-      <i class="fa-solid fa-circle-check"></i>
-      Mutawwif Indonesia
-    </span>
-
-    <span>•</span>
-
-    <span>
-      <i class="fa-solid fa-circle-check"></i>
-      Handling Jamaah
-    </span>
-
-  </div>
-
-</div>
-
-
-
-<!-- =====================================
-     QUICK SERVICES
-===================================== -->
-
-<section class="quick-section" id="layanan-cepat">
-
-  <div class="container">
-
-    <div class="quick-services">
-
-      <a href="#visa">
-
-        <div class="quick-icon">
-          <i class="fa-solid fa-passport"></i>
-        </div>
-
-        <div>
-          <strong>Visa</strong>
-          <small>Umroh & Istifadhah</small>
-        </div>
-
-        <i class="fa-solid fa-arrow-right quick-arrow"></i>
-
-      </a>
-
-
-      <a href="#hotel">
-
-        <div class="quick-icon">
-          <i class="fa-solid fa-hotel"></i>
-        </div>
-
-        <div>
-          <strong>Hotel</strong>
-          <small>Makkah & Madinah</small>
-        </div>
-
-        <i class="fa-solid fa-arrow-right quick-arrow"></i>
-
-      </a>
-
-
-      <a href="#transport">
-
-        <div class="quick-icon">
-          <i class="fa-solid fa-bus"></i>
-        </div>
-
-        <div>
-          <strong>Transport</strong>
-          <small>Saudi Arabia</small>
-        </div>
-
-        <i class="fa-solid fa-arrow-right quick-arrow"></i>
-
-      </a>
-
-
-      <a href="#la">
-
-        <div class="quick-icon">
-          <i class="fa-solid fa-kaaba"></i>
-        </div>
-
-        <div>
-          <strong>Paket LA</strong>
-          <small>Custom kebutuhan</small>
-        </div>
-
-        <i class="fa-solid fa-arrow-right quick-arrow"></i>
-
-      </a>
-
-
-      <a href="#kalkulator" class="quick-featured">
-
-        <div class="quick-icon">
-          <i class="fa-solid fa-calculator"></i>
-        </div>
-
-        <div>
-          <strong>Kalkulator</strong>
-          <small>Hitung estimasi</small>
-        </div>
-
-        <i class="fa-solid fa-arrow-right quick-arrow"></i>
-
-      </a>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- =====================================
-     INTRO
-===================================== -->
-
-<section class="section intro-section" id="tentang">
-
-  <div class="container intro-grid">
-
-    <div>
-
-      <div class="eyebrow">
-        <span></span>
-        SAFEERA MADINAH
-      </div>
-
-      <h2 class="section-title">
-        Satu partner untuk kebutuhan
-        <em>perjalanan di Tanah Suci.</em>
-      </h2>
-
-    </div>
-
-
-    <div class="intro-copy">
-
-      <p>
-        Safeera hadir untuk membantu jamaah mandiri maupun mitra travel
-        dalam menyiapkan kebutuhan perjalanan Umroh di Arab Saudi
-        secara lebih praktis.
-      </p>
-
-      <p>
-        Pilih layanan sesuai kebutuhan — mulai dari satu layanan
-        hingga paket Land Arrangement yang lebih lengkap.
-      </p>
-
-      <div class="locations">
-
-        <span>
-          <i class="fa-solid fa-location-dot"></i>
-          Depok, Indonesia
-        </span>
-
-        <span>
-          <i class="fa-solid fa-location-dot"></i>
-          Madinah, Saudi Arabia
-        </span>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- =====================================================
-     SAFEERA SMART CALCULATOR V2
-====================================================== -->
-<section class="section calculator-section" id="calculator">
-
-  <div class="container">
-
-    <div class="calculator-v2-heading reveal">
-      <span class="section-label">SAFEERA SMART ESTIMATOR</span>
-
-      <h2>
-        Susun Umrah Sesuai
-        <span>Kebutuhan Anda.</span>
-      </h2>
-
-      <p>
-        Pilih layanan yang Anda perlukan.
-        Bisa visa saja, hotel saja, transportasi,
-        mutawwif, atau Full Land Arrangement.
-      </p>
-    </div>
-
-
-    <div class="calc-v2-layout">
-
-      <!-- =========================
-           LEFT
-      ========================== -->
-      <div class="calc-v2-builder reveal">
-
-        <!-- MODE -->
-        <div class="calc-step">
-
-          <div class="calc-step-head">
-            <span class="calc-step-number">01</span>
-
-            <div>
-              <h3>Tipe Perjalanan</h3>
-              <p>Pilih jenis kebutuhan perjalanan.</p>
-            </div>
-          </div>
-
-          <div class="calc-mode-grid">
-
-            <button
-              type="button"
-              class="calc-mode active"
-              data-mode="mandiri"
-            >
-              <i class="fa-solid fa-kaaba"></i>
-
-              <span>
-                <strong>Umrah Mandiri</strong>
-                <small>Individual & keluarga</small>
-              </span>
-            </button>
-
-
-            <button
-              type="button"
-              class="calc-mode"
-              data-mode="group"
-            >
-              <i class="fa-solid fa-users"></i>
-
-              <span>
-                <strong>LA Group</strong>
-                <small>Travel & rombongan</small>
-              </span>
-            </button>
-
-          </div>
-
-        </div>
-
-
-        <!-- JAMAAH -->
-        <div class="calc-step">
-
-          <div class="calc-step-head">
-            <span class="calc-step-number">02</span>
-
-            <div>
-              <h3>Jumlah Jamaah</h3>
-              <p>
-                Hotel dan biaya group otomatis
-                menyesuaikan jumlah jamaah.
-              </p>
-            </div>
-          </div>
-
-
-          <div class="pax-control">
-
-            <button
-              type="button"
-              id="paxMinus"
-              aria-label="Kurangi jamaah"
-            >
-              −
-            </button>
-
-            <div class="pax-number">
-              <strong id="paxDisplay">2</strong>
-              <span>jamaah</span>
-            </div>
-
-            <button
-              type="button"
-              id="paxPlus"
-              aria-label="Tambah jamaah"
-            >
-              +
-            </button>
-
-          </div>
-
-        </div>
-
-
-        <!-- SERVICES -->
-        <div class="calc-step">
-
-          <div class="calc-step-head">
-
-            <span class="calc-step-number">03</span>
-
-            <div>
-              <h3>Pilih Layanan</h3>
-              <p>
-                Aktifkan hanya layanan yang Anda perlukan.
-              </p>
-            </div>
-
-          </div>
-
-
-          <div class="service-selector">
-
-            <button
-              type="button"
-              class="calc-service active"
-              data-calc-service="visa"
-            >
-              <i class="fa-solid fa-passport"></i>
-              <strong>Visa</strong>
-              <span class="service-check">
-                <i class="fa-solid fa-check"></i>
-              </span>
-            </button>
-
-
-            <button
-              type="button"
-              class="calc-service active"
-              data-calc-service="hotel"
-            >
-              <i class="fa-solid fa-hotel"></i>
-              <strong>Hotel</strong>
-              <span class="service-check">
-                <i class="fa-solid fa-check"></i>
-              </span>
-            </button>
-
-
-            <button
-              type="button"
-              class="calc-service active"
-              data-calc-service="transport"
-            >
-              <i class="fa-solid fa-bus"></i>
-              <strong>Transport</strong>
-              <span class="service-check">
-                <i class="fa-solid fa-check"></i>
-              </span>
-            </button>
-
-
-            <button
-              type="button"
-              class="calc-service"
-              data-calc-service="mutawwif"
-            >
-              <i class="fa-solid fa-user-group"></i>
-              <strong>Mutawwif</strong>
-              <span class="service-check">
-                <i class="fa-solid fa-check"></i>
-              </span>
-            </button>
-
-
-            <button
-              type="button"
-              class="calc-service"
-              data-calc-service="handling"
-            >
-              <i class="fa-solid fa-suitcase-rolling"></i>
-              <strong>Handling</strong>
-              <span class="service-check">
-                <i class="fa-solid fa-check"></i>
-              </span>
-            </button>
-
-
-            <button
-              type="button"
-              class="calc-service"
-              data-calc-service="ziarah"
-            >
-              <i class="fa-solid fa-location-dot"></i>
-              <strong>Ziarah</strong>
-              <span class="service-check">
-                <i class="fa-solid fa-check"></i>
-              </span>
-            </button>
-
-          </div>
-
-        </div>
-
-
-        <!-- VISA OPTIONS -->
-        <div
-          class="calc-options active"
-          id="optionVisa"
-        >
-
-          <div class="option-title">
-            <div>
-              <span>VISA</span>
-              <h4>Pilihan Visa</h4>
-            </div>
-
-            <i class="fa-solid fa-passport"></i>
-          </div>
-
-
-          <div class="option-card-grid">
-
-            <label class="radio-card active">
-
-              <input
-                type="radio"
-                name="visaType"
-                value="only"
-                checked
-              >
-
-              <span class="radio-circle"></span>
-
-              <span>
-                <strong>Visa Only</strong>
-                <small>Rp2.500.000 / pax</small>
-              </span>
-
-            </label>
-
-
-            <label class="radio-card">
-
-              <input
-                type="radio"
-                name="visaType"
-                value="siskopatuh"
-              >
-
-              <span class="radio-circle"></span>
-
-              <span>
-                <strong>Visa + Siskopatuh</strong>
-                <small>Rp2.850.000 / pax</small>
-              </span>
-
-            </label>
-
-          </div>
-
-        </div>
-
-
-        <!-- HOTEL OPTIONS -->
-        <div
-          class="calc-options active"
-          id="optionHotel"
-        >
-
-          <div class="option-title">
-
-            <div>
-              <span>HOTEL</span>
-              <h4>Akomodasi</h4>
-            </div>
-
-            <i class="fa-solid fa-hotel"></i>
-
-          </div>
-
-
-          <div class="hotel-calc-grid">
-
-            <!-- MAKKAH -->
-            <div class="hotel-calc-box">
-
-              <div class="hotel-calc-city">
-                <span>MAKKAH</span>
-                <strong>Hotel Makkah</strong>
-              </div>
-
-
-              <label>
-                Kategori
-
-                <select id="makkahHotel">
-                  <option value="765600">
-                    Budget — Rp765.600
-                  </option>
-
-                  <option value="950400">
-                    Comfort — Rp950.400
-                  </option>
-
-                  <option value="1742400">
-                    Premium — Rp1.742.400
-                  </option>
-
-                  <option value="2508000">
-                    Premium 5★ — Rp2.508.000
-                  </option>
-                </select>
-              </label>
-
-
-              <label>
-                Jumlah malam
-
-                <div class="mini-counter">
-
-                  <button
-                    type="button"
-                    data-counter-minus="makkahNights"
-                  >
-                    −
-                  </button>
-
-                  <input
-                    id="makkahNights"
-                    type="number"
-                    value="5"
-                    min="0"
-                    max="30"
-                  >
-
-                  <button
-                    type="button"
-                    data-counter-plus="makkahNights"
-                  >
-                    +
-                  </button>
-
-                </div>
-              </label>
-
-            </div>
-
-
-            <!-- MADINAH -->
-            <div class="hotel-calc-box">
-
-              <div class="hotel-calc-city">
-                <span>MADINAH</span>
-                <strong>Hotel Madinah</strong>
-              </div>
-
-
-              <label>
-                Kategori
-
-                <select id="madinahHotel">
-
-                  <option value="1240800">
-                    Budget — Rp1.240.800
-                  </option>
-
-                  <option value="1372800">
-                    Golden Tulip — Rp1.372.800
-                  </option>
-
-                  <option value="1478400">
-                    Comfort — Rp1.478.400
-                  </option>
-
-                  <option value="1716000">
-                    Premium — Rp1.716.000
-                  </option>
-
-                </select>
-              </label>
-
-
-              <label>
-                Jumlah malam
-
-                <div class="mini-counter">
-
-                  <button
-                    type="button"
-                    data-counter-minus="madinahNights"
-                  >
-                    −
-                  </button>
-
-                  <input
-                    id="madinahNights"
-                    type="number"
-                    value="4"
-                    min="0"
-                    max="30"
-                  >
-
-                  <button
-                    type="button"
-                    data-counter-plus="madinahNights"
-                  >
-                    +
-                  </button>
-
-                </div>
-
-              </label>
-
-            </div>
-
-          </div>
-
-
-          <div class="room-type-area">
-
-            <span class="input-label">
-              Tipe kamar
-            </span>
-
-            <div class="room-buttons">
-
-              <button
-                type="button"
-                class="room-type"
-                data-capacity="2"
-              >
-                Double
-                <small>2 pax</small>
-              </button>
-
-
-              <button
-                type="button"
-                class="room-type"
-                data-capacity="3"
-              >
-                Triple
-                <small>3 pax</small>
-              </button>
-
-
-              <button
-                type="button"
-                class="room-type active"
-                data-capacity="4"
-              >
-                Quad
-                <small>4 pax</small>
-              </button>
-
-            </div>
-
-            <p class="room-note">
-              Sistem menghitung jumlah kamar berdasarkan
-              kapasitas kamar dan jumlah jamaah.
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <!-- TRANSPORT -->
-        <div
-          class="calc-options active"
-          id="optionTransport"
-        >
-
-          <div class="option-title">
-
-            <div>
-              <span>TRANSPORT</span>
-              <h4>Transportasi Saudi</h4>
-            </div>
-
-            <i class="fa-solid fa-bus"></i>
-
-          </div>
-
-
-          <label class="full-input">
-            Paket transportasi
-
-            <select id="calcTransport">
-
-              <option value="shared">
-                Shared / Budget
-              </option>
-
-              <option value="private">
-                Private Car
-              </option>
-
-              <option value="hiace">
-                Hiace / Van
-              </option>
-
-              <option value="bus">
-                Bus Group
-              </option>
-
-            </select>
-          </label>
-
-
-          <div class="route-list">
-
-            <div>
-              <i class="fa-solid fa-plane-arrival"></i>
-              Jeddah Airport → Makkah
-            </div>
-
-            <div>
-              <i class="fa-solid fa-route"></i>
-              Makkah → Madinah
-            </div>
-
-            <div>
-              <i class="fa-solid fa-plane-departure"></i>
-              Madinah → Airport
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- MUTAWIF -->
-        <div
-          class="calc-options"
-          id="optionMutawwif"
-        >
-
-          <div class="option-title">
-
-            <div>
-              <span>MUTAWWIF</span>
-              <h4>Pendamping Jamaah</h4>
-            </div>
-
-            <i class="fa-solid fa-user-group"></i>
-
-          </div>
-
-
-          <div class="group-price-info">
-
-            <div>
-              <span>Tarif</span>
-              <strong>Rp1.320.000</strong>
-              <small>/ hari / group</small>
-            </div>
-
-            <div>
-              <span>Jumlah hari</span>
-
-              <div class="mini-counter">
-
-                <button
-                  type="button"
-                  data-counter-minus="mutawwifDays"
-                >
-                  −
-                </button>
-
-                <input
-                  id="mutawwifDays"
-                  type="number"
-                  value="1"
-                  min="1"
-                  max="30"
-                >
-
-                <button
-                  type="button"
-                  data-counter-plus="mutawwifDays"
-                >
-                  +
-                </button>
-
-              </div>
-
-            </div>
-
-          </div>
-
-          <p class="calc-hint">
-            Biaya Mutawwif dihitung per group kemudian
-            dibagi jumlah jamaah.
-          </p>
-
-        </div>
-
-
-        <!-- HANDLING -->
-        <div
-          class="calc-options"
-          id="optionHandling"
-        >
-
-          <div class="option-title">
-
-            <div>
-              <span>HANDLING</span>
-              <h4>Handling Jamaah</h4>
-            </div>
-
-            <i class="fa-solid fa-suitcase-rolling"></i>
-
-          </div>
-
-
-          <div class="addon-grid">
-
-            <label class="addon-card">
-
-              <input
-                type="checkbox"
-                class="handling-addon"
-                value="arrival"
-                checked
-              >
-
-              <span>
-                <strong>Arrival Handling</strong>
-                <small>Airport arrival</small>
-              </span>
-
-            </label>
-
-
-            <label class="addon-card">
-
-              <input
-                type="checkbox"
-                class="handling-addon"
-                value="hotel"
-              >
-
-              <span>
-                <strong>Hotel Handling</strong>
-                <small>Check-in & check-out</small>
-              </span>
-
-            </label>
-
-
-            <label class="addon-card">
-
-              <input
-                type="checkbox"
-                class="handling-addon"
-                value="departure"
-              >
-
-              <span>
-                <strong>Departure Handling</strong>
-                <small>Airport departure</small>
-              </span>
-
-            </label>
-
-          </div>
-
-        </div>
-
-
-        <!-- ZIARAH -->
-        <div
-          class="calc-options"
-          id="optionZiarah"
-        >
-
-          <div class="option-title">
-
-            <div>
-              <span>ZIARAH</span>
-              <h4>Program Ziarah</h4>
-            </div>
-
-            <i class="fa-solid fa-location-dot"></i>
-
-          </div>
-
-
-          <div class="option-card-grid">
-
-            <label class="addon-card">
-
-              <input
-                type="checkbox"
-                class="ziarah-addon"
-                value="makkah"
-                checked
-              >
-
-              <span>
-                <strong>Ziarah Makkah</strong>
-                <small>Program city tour</small>
-              </span>
-
-            </label>
-
-
-            <label class="addon-card">
-
-              <input
-                type="checkbox"
-                class="ziarah-addon"
-                value="madinah"
-              >
-
-              <span>
-                <strong>Ziarah Madinah</strong>
-                <small>Program city tour</small>
-              </span>
-
-            </label>
-
-          </div>
-
-        </div>
-
-
-        <!-- DISCLAIMER -->
-        <div class="calc-disclaimer">
-
-          <i class="fa-solid fa-circle-info"></i>
-
-          <p>
-            Estimasi bersifat indikatif.
-            Harga hotel, transportasi dan layanan dapat
-            berubah sesuai tanggal perjalanan,
-            musim, ketersediaan, dan jumlah jamaah.
-          </p>
-
-        </div>
-
-      </div>
-
-
-      <!-- =========================
-           RIGHT RESULT
-      ========================== -->
-      <aside class="calc-v2-result reveal">
-
-        <div class="result-top">
-
-          <span>SAFEERA ESTIMATE</span>
-
-          <div class="result-status">
-            LIVE
-          </div>
-
-        </div>
-
-
-        <div class="result-trip">
-
-          <div>
-            <small>TIPE PERJALANAN</small>
-            <strong id="resultMode">
-              Umrah Mandiri
-            </strong>
-          </div>
-
-          <div>
-            <small>JAMAAH</small>
-            <strong>
-              <span id="resultPax">2</span> Pax
-            </strong>
-          </div>
-
-        </div>
-
-
-        <div
-          class="result-breakdown"
-          id="resultBreakdown"
-        >
-
-          <!-- Generated by JS -->
-
-        </div>
-
-
-        <div class="result-total">
-
-          <span>TOTAL ESTIMASI</span>
-
-          <strong id="grandTotal">
-            Rp 0
-          </strong>
-
-        </div>
-
-
-        <div class="result-per-pax">
-
-          <span>ESTIMASI / PAX</span>
-
-          <strong id="perPaxTotal">
-            Rp 0
-          </strong>
-
-        </div>
-
-
-        <div class="result-note">
-          Estimasi awal dalam Rupiah.
-          Harga final dikonfirmasi oleh tim Safeera.
-        </div>
-
-
-        <button
-          type="button"
-          class="result-wa-button"
-          id="calculatorWhatsapp"
-        >
-          <i class="fa-brands fa-whatsapp"></i>
-
-          Minta Penawaran
-        </button>
-
-
-        <button
-          type="button"
-          class="result-reset-button"
-          id="calculatorReset"
-        >
-          <i class="fa-solid fa-rotate-left"></i>
-          Reset Kalkulator
-        </button>
-
-      </aside>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-
-<!-- =====================================
-     VISA
-===================================== -->
-
-<section class="section visa-section" id="visa">
-
-  <div class="container">
-
-    <div class="section-heading">
-
-      <div>
-
-        <div class="eyebrow">
-          <span></span>
-          VISA
-        </div>
-
-        <h2 class="section-title">
-          Pilih layanan
-          <em>Visa Umroh.</em>
-        </h2>
-
-      </div>
-
-
-      <p>
-        Pilih jenis pengurusan visa sesuai kebutuhan perjalanan.
-        Tim Safeera akan membantu proses dan informasi dokumen.
-      </p>
-
-    </div>
-
-
-
-    <div class="visa-grid">
-
-
-      <article class="visa-card">
-
-        <div class="visa-card-head">
-
-          <div class="service-round-icon">
-            <i class="fa-solid fa-passport"></i>
-          </div>
-
-          <span>VISA ONLY</span>
-
-        </div>
-
-        <h3>Visa Umroh</h3>
-
-        <div class="service-price">
-          Rp 2.500.000
-          <small>/ pax</small>
-        </div>
-
-        <p>
-          Untuk jamaah yang telah menyiapkan kebutuhan
-          perjalanan lainnya secara mandiri.
-        </p>
-
-
-        <ul>
-          <li>
-            <i class="fa-solid fa-check"></i>
-            Pengajuan visa
-          </li>
-
-          <li>
-            <i class="fa-solid fa-check"></i>
-            Bantuan pengecekan dokumen
-          </li>
-
-          <li>
-            <i class="fa-solid fa-check"></i>
-            Update proses
-          </li>
-        </ul>
-
-
-        <a
-          href="https://wa.me/6282165870953?text=Assalamualaikum%20Safeera%2C%20saya%20ingin%20bertanya%20tentang%20Visa%20Umroh%20Only."
-          target="_blank"
-          class="service-action"
-        >
-
-          Ajukan Visa
-
-          <i class="fa-solid fa-arrow-right"></i>
-
-        </a>
-
-      </article>
-
-
-
-      <article class="visa-card featured-visa">
-
-        <div class="popular-label">
-          PILIHAN POPULER
-        </div>
-
-
-        <div class="visa-card-head">
-
-          <div class="service-round-icon">
-            <i class="fa-solid fa-shield-halved"></i>
-          </div>
-
-          <span>VISA + SISKOPATUH</span>
-
-        </div>
-
-        <h3>Visa + Siskopatuh</h3>
-
-        <div class="service-price">
-          Rp 2.850.000
-          <small>/ pax</small>
-        </div>
-
-        <p>
-          Pilihan layanan Visa Umroh beserta kebutuhan
-          administrasi Siskopatuh.
-        </p>
-
-
-        <ul>
-          <li>
-            <i class="fa-solid fa-check"></i>
-            Pengajuan Visa Umroh
-          </li>
-
-          <li>
-            <i class="fa-solid fa-check"></i>
-            Siskopatuh
-          </li>
-
-          <li>
-            <i class="fa-solid fa-check"></i>
-            Pendampingan dokumen
-          </li>
-        </ul>
-
-
-        <a
-          href="https://wa.me/6282165870953?text=Assalamualaikum%20Safeera%2C%20saya%20ingin%20bertanya%20tentang%20Visa%20%2B%20Siskopatuh."
-          target="_blank"
-          class="service-action"
-        >
-
-          Konsultasi Sekarang
-
-          <i class="fa-solid fa-arrow-right"></i>
-
-        </a>
-
-      </article>
-
-
-
-      <article class="visa-card">
-
-        <div class="visa-card-head">
-
-          <div class="service-round-icon">
-            <i class="fa-solid fa-earth-asia"></i>
-          </div>
-
-          <span>LONG STAY</span>
-
-        </div>
-
-        <h3>Visa Istifadhah</h3>
-
-        <div class="service-price">
-          Rp 4.999.999
-          <small>/ pax</small>
-        </div>
-
-        <p>
-          Pilihan visa untuk kebutuhan kunjungan yang
-          memenuhi ketentuan layanan terkait.
-        </p>
-
-
-        <ul>
-          <li>
-            <i class="fa-solid fa-check"></i>
-            Konsultasi kebutuhan
-          </li>
-
-          <li>
-            <i class="fa-solid fa-check"></i>
-            Pengecekan dokumen
-          </li>
-
-          <li>
-            <i class="fa-solid fa-check"></i>
-            Pendampingan pengajuan
-          </li>
-        </ul>
-
-
-        <a
-          href="https://wa.me/6282165870953?text=Assalamualaikum%20Safeera%2C%20saya%20ingin%20bertanya%20tentang%20Visa%20Istifadhah."
-          target="_blank"
-          class="service-action"
-        >
-
-          Tanya Visa Istifadhah
-
-          <i class="fa-solid fa-arrow-right"></i>
-
-        </a>
-
-      </article>
-
-    </div>
-
-
-
-    <!-- PROCESS -->
-
-    <div class="process-row">
-
-      <div class="process-card">
-        <span>01</span>
-        <strong>Konsultasi</strong>
-        <p>Sampaikan jenis visa dan kebutuhan perjalanan.</p>
-      </div>
-
-      <div class="process-card">
-        <span>02</span>
-        <strong>Kirim Dokumen</strong>
-        <p>Tim memberikan daftar dokumen yang diperlukan.</p>
-      </div>
-
-      <div class="process-card">
-        <span>03</span>
-        <strong>Verifikasi</strong>
-        <p>Dokumen diperiksa sebelum proses pengajuan.</p>
-      </div>
-
-      <div class="process-card">
-        <span>04</span>
-        <strong>Proses Visa</strong>
-        <p>Safeera memberikan update proses kepada pelanggan.</p>
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- =====================================
-     LAND ARRANGEMENT
-===================================== -->
-
-<section class="section la-section" id="la">
-
-  <div class="container la-grid">
-
-    <div class="la-content">
-
-      <div class="eyebrow gold-eyebrow">
-        <span></span>
-        LAND ARRANGEMENT
-      </div>
-
-      <h2>
-        Satu koordinasi untuk
-        <em>kebutuhan jamaah di Saudi.</em>
-      </h2>
-
-      <p>
-        Cocok untuk jamaah mandiri, keluarga, grup maupun
-        mitra travel yang membutuhkan layanan darat di
-        Makkah, Madinah dan Jeddah.
-      </p>
-
-
-      <div class="la-features">
-
-        <div>
-          <i class="fa-solid fa-passport"></i>
-          <span>
-            <strong>Visa</strong>
-            Pengurusan sesuai kebutuhan
-          </span>
-        </div>
-
-        <div>
-          <i class="fa-solid fa-hotel"></i>
-          <span>
-            <strong>Hotel</strong>
-            Makkah & Madinah
-          </span>
-        </div>
-
-        <div>
-          <i class="fa-solid fa-bus"></i>
-          <span>
-            <strong>Transport</strong>
-            Airport & antar kota
-          </span>
-        </div>
-
-        <div>
-          <i class="fa-solid fa-user-group"></i>
-          <span>
-            <strong>Handling</strong>
-            Pendampingan jamaah
-          </span>
-        </div>
-
-        <div>
-          <i class="fa-solid fa-person-walking-luggage"></i>
-          <span>
-            <strong>Mutawwif</strong>
-            Guide Bahasa Indonesia
-          </span>
-        </div>
-
-        <div>
-          <i class="fa-solid fa-location-dot"></i>
-          <span>
-            <strong>Ziarah</strong>
-            Makkah & Madinah
-          </span>
-        </div>
-
-      </div>
-
-
-      <a
-        href="https://wa.me/6282165870953?text=Assalamualaikum%20Safeera%2C%20saya%20ingin%20konsultasi%20Paket%20Land%20Arrangement."
-        target="_blank"
-        class="button gold-button"
-      >
-
-        Minta Penawaran LA
-
-        <i class="fa-brands fa-whatsapp"></i>
-
-      </a>
-
-    </div>
-
-
-
-    <div class="la-package-card">
-
-      <div class="la-package-top">
-
-        <span>SAFEERA</span>
-
-        <small>Custom Package</small>
-
-      </div>
-
-
-      <h3>
-        Land Arrangement
-        <em>Saudi Arabia</em>
-      </h3>
-
-
-      <p>
-        Paket dapat disesuaikan berdasarkan jumlah jamaah,
-        tanggal keberangkatan, kategori hotel dan kendaraan.
-      </p>
-
-
-      <div class="package-route">
-
-        <div>
-          <span>01</span>
-          <strong>JEDDAH</strong>
-        </div>
-
-        <i class="fa-solid fa-arrow-right"></i>
-
-        <div>
-          <span>02</span>
-          <strong>MAKKAH</strong>
-        </div>
-
-        <i class="fa-solid fa-arrow-right"></i>
-
-        <div>
-          <span>03</span>
-          <strong>MADINAH</strong>
-        </div>
-
-      </div>
-
-
-      <div class="package-bottom">
-
-        <span>
-          <i class="fa-solid fa-users"></i>
-          Individual & Group
-        </span>
-
-        <span>
-          <i class="fa-solid fa-handshake"></i>
-          B2B Travel
-        </span>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- =====================================
-     HOTEL
-===================================== -->
-
-<section class="section hotel-section" id="hotel">
-
-  <div class="container">
-
-    <div class="section-heading">
-
-      <div>
-
-        <div class="eyebrow">
-          <span></span>
-          HOTEL
-        </div>
-
-        <h2 class="section-title">
-          Menginap lebih nyaman di
-          <em>Makkah & Madinah.</em>
-        </h2>
-
-      </div>
-
-      <p>
-        Kami membantu mencarikan hotel berdasarkan budget,
-        lokasi, kapasitas kamar dan ketersediaan pada
-        tanggal perjalanan.
-      </p>
-
-    </div>
-
-
-
-    <div class="filter-tabs">
-
-      <button class="filter-tab active" data-city="all">
-        Semua
-      </button>
-
-      <button class="filter-tab" data-city="makkah">
-        Makkah
-      </button>
-
-      <button class="filter-tab" data-city="madinah">
-        Madinah
-      </button>
-
-    </div>
-
-
-
-    <div class="hotel-grid" id="hotelGrid">
-
-
-      <article class="hotel-card" data-city="makkah">
-
-        <div class="hotel-image hotel-placeholder makkah-bg">
-
-          <span class="hotel-city-badge">
-            MAKKAH
-          </span>
-
-          <div class="hotel-placeholder-icon">
-            <i class="fa-solid fa-kaaba"></i>
-          </div>
-
-          <small>Foto hotel dapat ditambahkan</small>
-
-        </div>
-
-
-        <div class="hotel-info">
-
-          <div class="hotel-meta">
-            <span>
-              <i class="fa-solid fa-location-dot"></i>
-              Makkah
-            </span>
-            <span>★★★★★</span>
-          </div>
-
-          <h3>Hotel Makkah — Premium</h3>
-
-          <p>
-            Pilihan hotel dekat area Masjidil Haram.
-            Nama hotel disesuaikan ketersediaan.
-          </p>
-
-          <div class="hotel-footer">
-
-            <div>
-              <small>HARGA</small>
-              <strong>Hubungi Kami</strong>
-            </div>
-
-            <a
-              href="https://wa.me/6282165870953?text=Assalamualaikum%20Safeera%2C%20saya%20mencari%20hotel%20di%20Makkah."
-              target="_blank"
-            >
-              Cek Hotel →
-            </a>
-
-          </div>
-
-        </div>
-
-      </article>
-
-
-
-      <article class="hotel-card" data-city="makkah">
-
-        <div class="hotel-image hotel-placeholder gold-bg">
-
-          <span class="hotel-city-badge">
-            MAKKAH
-          </span>
-
-          <div class="hotel-placeholder-icon">
-            <i class="fa-solid fa-hotel"></i>
-          </div>
-
-          <small>Foto hotel dapat ditambahkan</small>
-
-        </div>
-
-
-        <div class="hotel-info">
-
-          <div class="hotel-meta">
-            <span>
-              <i class="fa-solid fa-location-dot"></i>
-              Makkah
-            </span>
-            <span>★★★★</span>
-          </div>
-
-          <h3>Hotel Makkah — Value</h3>
-
-          <p>
-            Pilihan untuk jamaah yang mengutamakan
-            keseimbangan harga dan kenyamanan.
-          </p>
-
-          <div class="hotel-footer">
-
-            <div>
-              <small>HARGA</small>
-              <strong>Hubungi Kami</strong>
-            </div>
-
-            <a
-              href="https://wa.me/6282165870953?text=Assalamualaikum%20Safeera%2C%20saya%20mencari%20hotel%20Makkah%20kategori%20value."
-              target="_blank"
-            >
-              Cek Hotel →
-            </a>
-
-          </div>
-
-        </div>
-
-      </article>
-
-
-
-      <article class="hotel-card" data-city="madinah">
-
-        <div class="hotel-image hotel-placeholder madinah-bg">
-
-          <span class="hotel-city-badge">
-            MADINAH
-          </span>
-
-          <div class="hotel-placeholder-icon">
-            <i class="fa-solid fa-mosque"></i>
-          </div>
-
-          <small>Foto hotel dapat ditambahkan</small>
-
-        </div>
-
-
-        <div class="hotel-info">
-
-          <div class="hotel-meta">
-            <span>
-              <i class="fa-solid fa-location-dot"></i>
-              Madinah
-            </span>
-            <span>★★★★★</span>
-          </div>
-
-          <h3>Hotel Madinah — Premium</h3>
-
-          <p>
-            Pilihan akomodasi untuk jamaah yang
-            mengutamakan akses dan kenyamanan.
-          </p>
-
-          <div class="hotel-footer">
-
-            <div>
-              <small>HARGA</small>
-              <strong>Hubungi Kami</strong>
-            </div>
-
-            <a
-              href="https://wa.me/6282165870953?text=Assalamualaikum%20Safeera%2C%20saya%20mencari%20hotel%20di%20Madinah."
-              target="_blank"
-            >
-              Cek Hotel →
-            </a>
-
-          </div>
-
-        </div>
-
-      </article>
-
-    </div>
-
-
-    <div class="center-action">
-
-      <a
-        href="https://wa.me/6282165870953?text=Assalamualaikum%20Safeera%2C%20boleh%20minta%20pilihan%20hotel%20Makkah%20dan%20Madinah?"
-        target="_blank"
-        class="outline-action"
-      >
-
-        Minta Daftar Hotel
-
-        <i class="fa-brands fa-whatsapp"></i>
-
-      </a>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- =====================================
-     TRANSPORT
-===================================== -->
-
-<section class="section transport-section" id="transport">
-
-  <div class="container">
-
-    <div class="section-heading">
-
-      <div>
-
-        <div class="eyebrow">
-          <span></span>
-          TRANSPORT SAUDI
-        </div>
-
-        <h2 class="section-title">
-          Dari airport hingga antar kota,
-          <em>lebih terkoordinasi.</em>
-        </h2>
-
-      </div>
-
-      <p>
-        Pilihan kendaraan disesuaikan dengan jumlah jamaah,
-        rute, bagasi dan kebutuhan perjalanan.
-      </p>
-
-    </div>
-
-
-
-    <div class="transport-grid">
-
-
-      <article class="transport-card">
-
-        <div class="transport-icon">
-          <i class="fa-solid fa-plane-arrival"></i>
-        </div>
-
-        <span>01</span>
-
-        <h3>Airport Transfer</h3>
-
-        <p>
-          Penjemputan atau pengantaran dari dan menuju
-          airport sesuai itinerary.
-        </p>
-
-        <div class="transport-tags">
-          <small>Jeddah</small>
-          <small>Madinah</small>
-          <small>Private</small>
-        </div>
-
-      </article>
-
-
-
-      <article class="transport-card">
-
-        <div class="transport-icon">
-          <i class="fa-solid fa-road"></i>
-        </div>
-
-        <span>02</span>
-
-        <h3>Intercity</h3>
-
-        <p>
-          Perjalanan antar kota seperti
-          Jeddah–Makkah–Madinah.
-        </p>
-
-        <div class="transport-tags">
-          <small>Car</small>
-          <small>Hiace</small>
-          <small>Bus</small>
-        </div>
-
-      </article>
-
-
-
-      <article class="transport-card">
-
-        <div class="transport-icon">
-          <i class="fa-solid fa-train"></i>
-        </div>
-
-        <span>03</span>
-
-        <h3>Haramain Transfer</h3>
-
-        <p>
-          Transfer menuju atau dari stasiun
-          Kereta Cepat Haramain.
-        </p>
-
-        <div class="transport-tags">
-          <small>Station</small>
-          <small>Hotel</small>
-          <small>Airport</small>
-        </div>
-
-      </article>
-
-
-
-      <article class="transport-card">
-
-        <div class="transport-icon">
-          <i class="fa-solid fa-map-location-dot"></i>
-        </div>
-
-        <span>04</span>
-
-        <h3>Ziarah</h3>
-
-        <p>
-          Transportasi untuk program ziarah
-          Makkah dan Madinah.
-        </p>
-
-        <div class="transport-tags">
-          <small>Makkah</small>
-          <small>Madinah</small>
-          <small>Group</small>
-        </div>
-
-      </article>
-
-    </div>
-
-
-    <div class="center-action">
-
-      <a
-        href="https://wa.me/6282165870953?text=Assalamualaikum%20Safeera%2C%20saya%20ingin%20bertanya%20transportasi%20di%20Saudi."
-        target="_blank"
-        class="dark-action"
-      >
-
-        Tanya Harga Transport
-
-        <i class="fa-brands fa-whatsapp"></i>
-
-      </a>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- =====================================
-     MUTAWIF
-===================================== -->
-
-<section class="section mutawwif-section" id="mutawwif">
-
-  <div class="container mutawwif-grid">
-
-    <div class="mutawwif-copy">
-
-      <div class="eyebrow gold-eyebrow">
-        <span></span>
-        MUTAWWIF / GUIDE
-      </div>
-
-      <h2>
-        Pendamping berbahasa Indonesia
-        <em>di Tanah Suci.</em>
-      </h2>
-
-      <p>
-        Layanan Mutawwif/guide untuk membantu koordinasi
-        perjalanan dan pendampingan jamaah sesuai program.
-      </p>
-
-
-      <div class="mutawwif-benefits">
-
-        <div>
-          <i class="fa-solid fa-language"></i>
-          <span>
-            <strong>Bahasa Indonesia</strong>
-            Komunikasi lebih mudah
-          </span>
-        </div>
-
-        <div>
-          <i class="fa-solid fa-location-dot"></i>
-          <span>
-            <strong>Makkah & Madinah</strong>
-            Sesuai kebutuhan program
-          </span>
-        </div>
-
-        <div>
-          <i class="fa-solid fa-calendar-days"></i>
-          <span>
-            <strong>Fleksibel</strong>
-            Pilih kebutuhan per hari
-          </span>
-        </div>
-
-        <div>
-          <i class="fa-solid fa-users"></i>
-          <span>
-            <strong>Individual & Grup</strong>
-            Menyesuaikan jamaah
-          </span>
-        </div>
-
-      </div>
-
-    </div>
-
-
-
-    <div class="mutawwif-price-card">
-
-      <div class="premium-tag">
-        SAFEERA ADD-ON
-      </div>
-
-      <span>MUTAWWIF / GUIDE</span>
-
-      <h3>
-        Rp 1.320.000
-        <small>/ hari</small>
-      </h3>
-
-      <ul>
-
-        <li>
-          <i class="fa-regular fa-circle-check"></i>
-          Guide berbahasa Indonesia
-        </li>
-
-        <li>
-          <i class="fa-regular fa-circle-check"></i>
-          Makkah atau Madinah
-        </li>
-
-        <li>
-          <i class="fa-regular fa-circle-check"></i>
-          Pilihan tanggal sesuai ketersediaan
-        </li>
-
-        <li>
-          <i class="fa-regular fa-circle-check"></i>
-          Dapat digabung dengan paket LA
-        </li>
-
-      </ul>
-
-
-      <a
-        href="https://wa.me/6282165870953?text=Assalamualaikum%20Safeera%2C%20saya%20ingin%20booking%20Mutawwif%20%2F%20Guide."
-        target="_blank"
-        class="button gold-button full-button"
-      >
-
-        Booking Mutawwif
-
-        <i class="fa-solid fa-arrow-right"></i>
-
-      </a>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- =====================================
-     OTHER SERVICES
-===================================== -->
-
-<section class="section other-services" id="lainnya">
-
-  <div class="container">
-
-    <div class="center-heading">
-
-      <div class="eyebrow centered-eyebrow">
-        <span></span>
-        LEBIH LENGKAP
-        <span></span>
-      </div>
-
-      <h2 class="section-title">
-        Lengkapi perjalanan bersama
-        <em>Safeera.</em>
-      </h2>
-
-      <p>
-        Pilih layanan tambahan sesuai kebutuhan perjalanan Anda.
-      </p>
-
-    </div>
-
-
-
-    <div class="other-grid">
-
-
-      <article class="other-card">
-
-        <div class="other-icon">
-          <i class="fa-solid fa-train-subway"></i>
-        </div>
-
-        <h3>Kereta Haramain</h3>
-
-        <p>
-          Bantuan kebutuhan perjalanan Kereta Cepat
-          Haramain sesuai rute dan jadwal.
-        </p>
-
-        <a
-          href="https://wa.me/6282165870953?text=Saya%20ingin%20bertanya%20Kereta%20Haramain."
-          target="_blank"
-        >
-          Konsultasi →
-        </a>
-
-      </article>
-
-
-
-      <article class="other-card">
-
-        <div class="other-icon">
-          <i class="fa-solid fa-plane"></i>
-        </div>
-
-        <h3>Tiket Pesawat</h3>
-
-        <p>
-          Bantuan pencarian kebutuhan penerbangan
-          berdasarkan itinerary jamaah.
-        </p>
-
-        <a
-          href="https://wa.me/6282165870953?text=Saya%20ingin%20bertanya%20tiket%20pesawat%20Umroh."
-          target="_blank"
-        >
-          Konsultasi →
-        </a>
-
-      </article>
-
-
-
-      <article class="other-card">
-
-        <div class="other-icon">
-          <i class="fa-solid fa-map-location"></i>
-        </div>
-
-        <h3>Ziarah</h3>
-
-        <p>
-          Program transport dan pendampingan
-          ziarah Makkah atau Madinah.
-        </p>
-
-        <a
-          href="https://wa.me/6282165870953?text=Saya%20ingin%20bertanya%20program%20ziarah."
-          target="_blank"
-        >
-          Konsultasi →
-        </a>
-
-      </article>
-
-
-
-      <article class="other-card">
-
-        <div class="other-icon">
-          <i class="fa-solid fa-suitcase-rolling"></i>
-        </div>
-
-        <h3>Perlengkapan Umroh</h3>
-
-        <p>
-          Kebutuhan perlengkapan perjalanan jamaah.
-          Katalog produk dapat ditambahkan kemudian.
-        </p>
-
-        <a
-          href="https://wa.me/6282165870953?text=Saya%20ingin%20bertanya%20perlengkapan%20Umroh."
-          target="_blank"
-        >
-          Konsultasi →
-        </a>
-
-      </article>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- =====================================
-     HOW IT WORKS
-===================================== -->
-
-<section class="section journey-section">
-
-  <div class="container">
-
-    <div class="center-heading">
-
-      <div class="eyebrow centered-eyebrow">
-        <span></span>
-        CARA PEMESANAN
-        <span></span>
-      </div>
-
-      <h2 class="section-title">
-        Lebih sederhana,
-        <em>empat langkah saja.</em>
-      </h2>
-
-    </div>
-
-
-    <div class="journey-steps">
-
-      <div class="journey-step">
-
-        <span>01</span>
-
-        <div class="journey-icon">
-          <i class="fa-brands fa-whatsapp"></i>
-        </div>
-
-        <h3>Konsultasi</h3>
-
-        <p>
-          Hubungi Safeera dan sampaikan
-          kebutuhan perjalanan.
-        </p>
-
-      </div>
-
-
-      <div class="journey-line"></div>
-
-
-      <div class="journey-step">
-
-        <span>02</span>
-
-        <div class="journey-icon">
-          <i class="fa-solid fa-sliders"></i>
-        </div>
-
-        <h3>Pilih Layanan</h3>
-
-        <p>
-          Tentukan visa, hotel, transport
-          atau paket LA.
-        </p>
-
-      </div>
-
-
-      <div class="journey-line"></div>
-
-
-      <div class="journey-step">
-
-        <span>03</span>
-
-        <div class="journey-icon">
-          <i class="fa-solid fa-file-circle-check"></i>
-        </div>
-
-        <h3>Konfirmasi</h3>
-
-        <p>
-          Konfirmasi rincian layanan,
-          dokumen dan pembayaran.
-        </p>
-
-      </div>
-
-
-      <div class="journey-line"></div>
-
-
-      <div class="journey-step">
-
-        <span>04</span>
-
-        <div class="journey-icon">
-          <i class="fa-solid fa-plane-departure"></i>
-        </div>
-
-        <h3>Perjalanan</h3>
-
-        <p>
-          Tim membantu koordinasi layanan
-          yang telah dipesan.
-        </p>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- =====================================
-     WHY SAFEERA
-===================================== -->
-
-<section class="section why-section">
-
-  <div class="container why-grid">
-
-    <div>
-
-      <div class="eyebrow gold-eyebrow">
-        <span></span>
-        WHY SAFEERA
-      </div>
-
-      <h2>
-        Indonesia dekat,
-        <em>Madinah pun dekat.</em>
-      </h2>
-
-      <p>
-        Safeera menghubungkan kebutuhan pelanggan Indonesia
-        dengan koordinasi layanan di Arab Saudi.
-      </p>
-
-    </div>
-
-
-
-    <div class="why-cards">
-
-      <article>
-
-        <i class="fa-solid fa-earth-asia"></i>
-
-        <strong>
-          Indonesia × Saudi
-        </strong>
-
-        <p>
-          Basis layanan di Depok dan Madinah.
-        </p>
-
-      </article>
-
-
-      <article>
-
-        <i class="fa-solid fa-layer-group"></i>
-
-        <strong>
-          One Stop Service
-        </strong>
-
-        <p>
-          Berbagai kebutuhan perjalanan dalam satu koordinasi.
-        </p>
-
-      </article>
-
-
-      <article>
-
-        <i class="fa-solid fa-people-group"></i>
-
-        <strong>
-          B2C & B2B
-        </strong>
-
-        <p>
-          Melayani jamaah langsung maupun mitra travel.
-        </p>
-
-      </article>
-
-
-      <article>
-
-        <i class="fa-solid fa-headset"></i>
-
-        <strong>
-          Saudi Support
-        </strong>
-
-        <p>
-          Bantuan koordinasi selama jamaah berada di Saudi.
-        </p>
-
-      </article>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- =====================================
-     TESTIMONIAL
-===================================== -->
-
-<section class="section testimonial-section">
-
-  <div class="container">
-
-    <div class="section-heading">
-
-      <div>
-
-        <div class="eyebrow">
-          <span></span>
-          CERITA JAMAAH
-        </div>
-
-        <h2 class="section-title">
-          Pengalaman bersama
-          <em>Safeera.</em>
-        </h2>
-
-      </div>
-
-      <p>
-        Bagian ini dapat diganti dengan testimoni asli
-        pelanggan Safeera beserta dokumentasinya.
-      </p>
-
-    </div>
-
-
-
-    <div class="testimonial-grid">
-
-      <article class="testimonial-card">
-
-        <div class="quote-mark">“</div>
-
-        <div class="testimonial-stars">
-          ★★★★★
-        </div>
-
-        <p>
-          Tempat untuk testimoni asli pelanggan Safeera.
-          Masukkan pengalaman jamaah setelah izin publikasi diperoleh.
-        </p>
-
-        <div class="testimonial-person">
-
-          <div class="avatar">S</div>
-
-          <div>
-            <strong>Testimoni Jamaah</strong>
-            <small>Indonesia</small>
-          </div>
-
-        </div>
-
-      </article>
-
-
-      <article class="testimonial-card">
-
-        <div class="quote-mark">“</div>
-
-        <div class="testimonial-stars">
-          ★★★★★
-        </div>
-
-        <p>
-          Testimoni tentang pelayanan hotel, transport,
-          visa atau pendampingan dapat ditampilkan di sini.
-        </p>
-
-        <div class="testimonial-person">
-
-          <div class="avatar">S</div>
-
-          <div>
-            <strong>Testimoni Jamaah</strong>
-            <small>Indonesia</small>
-          </div>
-
-        </div>
-
-      </article>
-
-
-      <article class="testimonial-card">
-
-        <div class="quote-mark">“</div>
-
-        <div class="testimonial-stars">
-          ★★★★★
-        </div>
-
-        <p>
-          Anda juga dapat memasukkan testimoni dari mitra
-          travel untuk memperkuat layanan B2B Safeera.
-        </p>
-
-        <div class="testimonial-person">
-
-          <div class="avatar">S</div>
-
-          <div>
-            <strong>Mitra Travel</strong>
-            <small>Indonesia</small>
-          </div>
-
-        </div>
-
-      </article>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- =====================================
-     GALLERY
-===================================== -->
-
-<section class="section gallery-section">
-
-  <div class="container">
-
-    <div class="center-heading">
-
-      <div class="eyebrow centered-eyebrow">
-        <span></span>
-        SAFEERA JOURNEY
-        <span></span>
-      </div>
-
-      <h2 class="section-title">
-        Dokumentasi
-        <em>perjalanan kami.</em>
-      </h2>
-
-      <p>
-        Nanti ganti kotak ini dengan dokumentasi asli Safeera.
-      </p>
-
-    </div>
-
-
-    <div class="gallery-grid">
-
-      <div class="gallery-item large-gallery">
-        <i class="fa-solid fa-kaaba"></i>
-        <span>Dokumentasi Makkah</span>
-      </div>
-
-      <div class="gallery-item">
-        <i class="fa-solid fa-mosque"></i>
-        <span>Dokumentasi Madinah</span>
-      </div>
-
-      <div class="gallery-item">
-        <i class="fa-solid fa-users"></i>
-        <span>Jamaah Safeera</span>
-      </div>
-
-      <div class="gallery-item">
-        <i class="fa-solid fa-bus"></i>
-        <span>Transportasi</span>
-      </div>
-
-      <div class="gallery-item">
-        <i class="fa-solid fa-hotel"></i>
-        <span>Hotel</span>
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- =====================================
+  /* =======================================================
      FAQ
-===================================== -->
+  ======================================================= */
 
-<section class="section faq-section" id="faq">
+  $$(".faq-question").forEach(question => {
+    question.addEventListener("click", () => {
+      const currentItem =
+        question.closest(".faq-item");
 
-  <div class="container faq-grid">
+      if (!currentItem) return;
 
-    <div class="faq-heading">
+      const wasActive =
+        currentItem.classList.contains("active");
 
-      <div class="eyebrow">
-        <span></span>
-        FAQ
-      </div>
+      $$(".faq-item").forEach(item => {
+        item.classList.remove("active");
+      });
 
-      <h2 class="section-title">
-        Pertanyaan yang
-        <em>sering ditanyakan.</em>
-      </h2>
+      if (!wasActive) {
+        currentItem.classList.add("active");
+      }
+    });
+  });
 
-      <p>
-        Tidak menemukan jawabannya?
-        Tim Safeera dapat membantu melalui WhatsApp.
-      </p>
 
-      <a
-        href="https://wa.me/6282165870953"
-        target="_blank"
-        class="outline-action"
-      >
+  /* =======================================================
+     TOAST
+  ======================================================= */
 
-        Tanya Safeera
+  const toast = $("#toast");
+  const toastMessage = $("#toastMessage");
 
-        <i class="fa-brands fa-whatsapp"></i>
+  let toastTimer = null;
 
-      </a>
+  function showToast(message) {
+    if (!toast) return;
 
-    </div>
+    if (toastMessage) {
+      toastMessage.textContent = message;
+    }
 
+    toast.classList.add("show");
 
+    clearTimeout(toastTimer);
+
+    toastTimer = setTimeout(() => {
+      toast.classList.remove("show");
+    }, 3000);
+  }
+
 
-    <div class="faq-list">
+  /* =======================================================
+     GENERIC MODAL SYSTEM
+  ======================================================= */
 
+  const serviceModal = $("#serviceModal");
+  const hotelModal = $("#hotelModal");
 
-      <div class="faq-item">
-
-        <button class="faq-question">
-
-          Apa itu Land Arrangement Umroh?
-
-          <i class="fa-solid fa-plus"></i>
-
-        </button>
-
-        <div class="faq-answer">
-          <p>
-            Land Arrangement adalah pengaturan kebutuhan perjalanan
-            darat jamaah seperti hotel, transportasi, handling,
-            Mutawwif dan layanan lain sesuai paket yang disepakati.
-          </p>
-        </div>
-
-      </div>
-
-
-      <div class="faq-item">
-
-        <button class="faq-question">
-
-          Apakah Safeera melayani jamaah mandiri?
-
-          <i class="fa-solid fa-plus"></i>
-
-        </button>
-
-        <div class="faq-answer">
-          <p>
-            Ya. Safeera dirancang untuk melayani jamaah individu,
-            keluarga, grup maupun kebutuhan B2B mitra travel.
-          </p>
-        </div>
-
-      </div>
-
-
-      <div class="faq-item">
-
-        <button class="faq-question">
-
-          Bisa pesan hotel saja?
-
-          <i class="fa-solid fa-plus"></i>
-
-        </button>
-
-        <div class="faq-answer">
-          <p>
-            Bisa. Anda dapat berkonsultasi mengenai hotel Makkah
-            atau Madinah tanpa mengambil seluruh paket LA.
-          </p>
-        </div>
-
-      </div>
-
-
-      <div class="faq-item">
-
-        <button class="faq-question">
-
-          Apakah harga kalkulator sudah final?
-
-          <i class="fa-solid fa-plus"></i>
-
-        </button>
-
-        <div class="faq-answer">
-          <p>
-            Belum. Kalkulator memberikan estimasi awal. Harga final
-            dapat berbeda berdasarkan tanggal, ketersediaan hotel,
-            rute, jumlah jamaah dan kebutuhan aktual.
-          </p>
-        </div>
-
-      </div>
-
-
-      <div class="faq-item">
-
-        <button class="faq-question">
-
-          Apakah Safeera menyediakan Mutawwif?
-
-          <i class="fa-solid fa-plus"></i>
-
-        </button>
-
-        <div class="faq-answer">
-          <p>
-            Ya. Layanan Mutawwif/guide berbahasa Indonesia
-            dapat dikonsultasikan berdasarkan tanggal,
-            kota dan program perjalanan.
-          </p>
-        </div>
-
-      </div>
-
-
-      <div class="faq-item">
-
-        <button class="faq-question">
-
-          Bagaimana cara mendapatkan penawaran grup?
-
-          <i class="fa-solid fa-plus"></i>
-
-        </button>
-
-        <div class="faq-answer">
-          <p>
-            Hubungi Safeera melalui WhatsApp dan informasikan
-            jumlah jamaah, tanggal perjalanan, kebutuhan hotel,
-            transportasi dan layanan lain yang diperlukan.
-          </p>
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- =====================================
-     FINAL CTA
-===================================== -->
-
-<section class="final-cta">
-
-  <div class="cta-pattern"></div>
-
-  <div class="container final-cta-inner">
-
-    <div class="cta-symbol">
-      S
-    </div>
-
-    <div class="eyebrow light-eyebrow centered-eyebrow">
-      <span></span>
-      SAFEERA MADINAH
-      <span></span>
-    </div>
-
-    <h2>
-      Perjalanan yang baik
-      dimulai dari persiapan yang baik.
-    </h2>
-
-    <p>
-      Ceritakan rencana perjalanan Anda.
-      Tim Safeera siap membantu menyusun kebutuhan
-      Umroh dan Land Arrangement.
-    </p>
-
-
-    <div class="cta-buttons">
-
-      <a
-        href="https://wa.me/6282165870953?text=Assalamualaikum%20Safeera%2C%20saya%20ingin%20konsultasi%20perjalanan%20Umroh."
-        target="_blank"
-        class="button gold-button"
-      >
-
-        <i class="fa-brands fa-whatsapp"></i>
-
-        Konsultasi Gratis
-
-      </a>
-
-      <a href="#kalkulator" class="button ghost-button">
-        Hitung Estimasi
-      </a>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-
-<!-- =====================================
-     FOOTER
-===================================== -->
-
-<footer class="footer">
-
-  <div class="container footer-top">
-
-
-    <div class="footer-brand">
-
-      <div class="footer-logo">
-
-        <div class="brand-mark">
-          S
-        </div>
-
-        <div class="brand-name">
-          <strong>SAFEERA</strong>
-          <span>MADINAH</span>
-        </div>
-
-      </div>
-
-
-      <p>
-        Journey • Hospitality • A Higher Meaning
-      </p>
-
-
-      <p class="footer-description">
-        Layanan kebutuhan Umroh & Land Arrangement
-        untuk jamaah dan mitra travel Indonesia.
-      </p>
-
-
-      <div class="footer-social">
-
-        <a href="#" aria-label="Instagram">
-          <i class="fa-brands fa-instagram"></i>
-        </a>
-
-        <a href="#" aria-label="TikTok">
-          <i class="fa-brands fa-tiktok"></i>
-        </a>
-
-        <a
-          href="https://wa.me/6282165870953"
-          target="_blank"
-          aria-label="WhatsApp"
-        >
-          <i class="fa-brands fa-whatsapp"></i>
-        </a>
-
-      </div>
-
-    </div>
-
-
-
-    <div class="footer-column">
-
-      <h4>Layanan</h4>
-
-      <a href="#visa">Visa Umroh</a>
-      <a href="#la">Land Arrangement</a>
-      <a href="#hotel">Hotel</a>
-      <a href="#transport">Transportasi</a>
-      <a href="#mutawwif">Mutawwif</a>
-      <a href="#lainnya">Haramain</a>
-
-    </div>
-
-
-
-    <div class="footer-column">
-
-      <h4>Safeera</h4>
-
-      <a href="#tentang">Tentang Kami</a>
-      <a href="#kalkulator">Kalkulator</a>
-      <a href="#faq">FAQ</a>
-      <a href="#">Syarat & Ketentuan</a>
-      <a href="#">Kebijakan Privasi</a>
-
-    </div>
-
-
-
-    <div class="footer-column">
-
-      <h4>Hubungi Kami</h4>
-
-      <a
-        href="https://wa.me/6282165870953"
-        target="_blank"
-      >
-        <i class="fa-brands fa-whatsapp"></i>
-        +62 821-6587-0953
-      </a>
-
-      <span>
-        <i class="fa-solid fa-location-dot"></i>
-        Depok, Indonesia
-      </span>
-
-      <span>
-        <i class="fa-solid fa-location-dot"></i>
-        Madinah, Saudi Arabia
-      </span>
-
-      <span>
-        <i class="fa-solid fa-envelope"></i>
-        Email akan ditambahkan
-      </span>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="container footer-legal-placeholder">
-
-    <i class="fa-solid fa-shield-halved"></i>
-
-    <p>
-      Informasi badan usaha, legalitas, lisensi dan mitra resmi
-      Safeera akan ditampilkan di bagian ini setelah data
-      terverifikasi tersedia.
-    </p>
-
-  </div>
-
-
-
-  <div class="container footer-bottom">
-
-    <p>
-      © 2026 Safeera Madinah. All rights reserved.
-    </p>
-
-    <span>
-      Indonesia • Saudi Arabia
-    </span>
-
-  </div>
-
-</footer>
-
-
-
-<!-- =====================================
+  function openModal(modal) {
+    if (!modal) return;
+
+    modal.classList.add("open");
+    document.body.classList.add("no-scroll");
+  }
+
+  function closeModal(modal) {
+    if (!modal) return;
+
+    modal.classList.remove("open");
+
+    if (!$(".modal.open")) {
+      document.body.classList.remove("no-scroll");
+    }
+  }
+
+  $$(".modal").forEach(modal => {
+    modal.addEventListener("click", event => {
+      if (event.target === modal) {
+        closeModal(modal);
+      }
+    });
+
+    $$(
+      "[data-modal-close], .modal-close",
+      modal
+    ).forEach(button => {
+      button.addEventListener("click", () => {
+        closeModal(modal);
+      });
+    });
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key !== "Escape") return;
+
+    $$(".modal.open").forEach(modal => {
+      closeModal(modal);
+    });
+
+    closeMobileMenu();
+  });
+
+
+  /* =======================================================
+     SERVICE MODAL
+  ======================================================= */
+
+  const SERVICE_DATA = {
+    visa: {
+      title: "Visa Umrah",
+      text:
+        "Layanan pengurusan visa Umrah untuk jamaah individual, keluarga, maupun group."
+    },
+
+    hotel: {
+      title: "Hotel",
+      text:
+        "Pilihan akomodasi Makkah dan Madinah sesuai kebutuhan perjalanan dan anggaran."
+    },
+
+    transport: {
+      title: "Transportasi",
+      text:
+        "Transportasi perjalanan Saudi untuk airport transfer, Makkah, Madinah dan kebutuhan group."
+    },
+
+    handling: {
+      title: "Handling",
+      text:
+        "Pendampingan operasional jamaah mulai dari kedatangan, hotel hingga keberangkatan."
+    },
+
+    mutawwif: {
+      title: "Mutawwif",
+      text:
+        "Pendamping ibadah untuk membantu perjalanan Umrah jamaah selama program."
+    },
+
+    ziarah: {
+      title: "Ziarah",
+      text:
+        "Program ziarah dan city tour Makkah atau Madinah sesuai kebutuhan perjalanan."
+    }
+  };
+
+  $$("[data-service-open]").forEach(button => {
+    button.addEventListener("click", () => {
+      const key =
+        button.dataset.serviceOpen;
+
+      const data =
+        SERVICE_DATA[key];
+
+      if (!data) return;
+
+      if (!serviceModal) {
+        $("#calculator")?.scrollIntoView({
+          behavior: "smooth"
+        });
+        return;
+      }
+
+      const title =
+        $(
+          "[data-modal-title], .modal-title, #serviceModalTitle",
+          serviceModal
+        );
+
+      const text =
+        $(
+          "[data-modal-text], .modal-text, #serviceModalText",
+          serviceModal
+        );
+
+      if (title) {
+        title.textContent = data.title;
+      }
+
+      if (text) {
+        text.textContent = data.text;
+      }
+
+      openModal(serviceModal);
+    });
+  });
+
+
+  /* =======================================================
+     HOTEL DETAIL MODAL
+  ======================================================= */
+
+  $$(".hotel-detail-btn").forEach(button => {
+    button.addEventListener("click", () => {
+      const hotel =
+        button.dataset.hotel ||
+        "Hotel Safeera";
+
+      if (!hotelModal) {
+        showToast(
+          `Detail ${hotel} akan dikonfirmasi tim Safeera.`
+        );
+        return;
+      }
+
+      const title =
+        $(
+          "[data-modal-title], .modal-title, #hotelModalTitle",
+          hotelModal
+        );
+
+      if (title) {
+        title.textContent = hotel;
+      }
+
+      openModal(hotelModal);
+    });
+  });
+
+
+  /* =======================================================
+     PACKAGE SELECT
+  ======================================================= */
+
+  $$(".package-select").forEach(button => {
+    button.addEventListener("click", () => {
+      const packageName =
+        button.dataset.package || "Custom Package";
+
+      const calculator = $("#calculator");
+
+      if (calculator) {
+        calculator.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+
+      showToast(
+        `${packageName} dipilih. Silakan atur kebutuhan di kalkulator.`
+      );
+    });
+  });
+
+
+  /* =======================================================
+     TRANSPORT SELECT BUTTON
+  ======================================================= */
+
+  $$(".transport-select").forEach(button => {
+    button.addEventListener("click", () => {
+      const type =
+        button.dataset.transport || "";
+
+      const calculator = $("#calculator");
+
+      calculator?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+      setTimeout(() => {
+        const select =
+          $("#calcTransport");
+
+        if (!select) return;
+
+        const options =
+          [...select.options];
+
+        const found =
+          options.find(option =>
+            option.value === type
+          );
+
+        if (found) {
+          select.value = type;
+          select.dispatchEvent(
+            new Event("change", {
+              bubbles: true
+            })
+          );
+        }
+      }, 450);
+    });
+  });
+
+
+  /* =======================================================
+     CONTACT FORM
+  ======================================================= */
+
+  const contactForm = $("#contactForm");
+
+  contactForm?.addEventListener(
+    "submit",
+    event => {
+      event.preventDefault();
+
+      const name =
+        $("#contactName")?.value.trim() || "-";
+
+      const pax =
+        $("#contactPax")?.value.trim() || "-";
+
+      const date =
+        $("#contactDate")?.value.trim() || "-";
+
+      const service =
+        $("#contactService")?.value.trim() || "-";
+
+      const note =
+        $("#contactMessage")?.value.trim() || "-";
+
+      const message = [
+        "Assalamu'alaikum Safeera,",
+        "",
+        "Saya ingin meminta informasi perjalanan Umrah.",
+        "",
+        `Nama: ${name}`,
+        `Jumlah jamaah: ${pax}`,
+        `Tanggal perjalanan: ${date}`,
+        `Layanan: ${service}`,
+        `Catatan: ${note}`,
+        "",
+        "Mohon informasinya. Terima kasih."
+      ].join("\n");
+
+      openWhatsApp(message);
+    }
+  );
+
+
+  /* =======================================================
      FLOATING WHATSAPP
-===================================== -->
+  ======================================================= */
 
-<div class="floating-contact">
+  const floatingWhatsapp =
+    $("#floatingWhatsapp");
 
-  <a
-    href="https://wa.me/6282165870953"
-    target="_blank"
-    class="floating-chat"
-  >
+  floatingWhatsapp?.addEventListener(
+    "click",
+    event => {
+      if (
+        floatingWhatsapp.tagName
+          .toLowerCase() === "a" &&
+        floatingWhatsapp.getAttribute("href") &&
+        floatingWhatsapp.getAttribute("href") !== "#"
+      ) {
+        return;
+      }
 
-    <i class="fa-brands fa-whatsapp"></i>
+      event.preventDefault();
 
-    <span>Chat Safeera</span>
-
-  </a>
-
-</div>
-
-
-<button
-  class="back-top"
-  id="backTop"
-  aria-label="Kembali ke atas"
->
-
-  <i class="fa-solid fa-arrow-up"></i>
-
-</button>
+      openWhatsApp(
+        "Assalamu'alaikum Safeera, saya ingin bertanya mengenai layanan Umrah dan Land Arrangement."
+      );
+    }
+  );
 
 
-<script src="script.js"></script>
+  /* =======================================================
+     SMART CALCULATOR V2
+  ======================================================= */
 
-</body>
-</html>
+  const calculator = $("#calculator");
+
+  if (!calculator) {
+    console.warn(
+      "Safeera Calculator: #calculator tidak ditemukan."
+    );
+    return;
+  }
+
+
+  /* =======================================================
+     CALCULATOR ELEMENTS
+  ======================================================= */
+
+  const modeButtons =
+    $$(".calc-mode", calculator);
+
+  const serviceButtons =
+    $$(".calc-service", calculator);
+
+  const roomButtons =
+    $$(".room-type", calculator);
+
+  const paxMinus =
+    $("#paxMinus", calculator);
+
+  const paxPlus =
+    $("#paxPlus", calculator);
+
+  const paxDisplay =
+    $("#paxDisplay", calculator);
+
+  const resultPax =
+    $("#resultPax", calculator);
+
+  const resultMode =
+    $("#resultMode", calculator);
+
+  const makkahHotel =
+    $("#makkahHotel", calculator);
+
+  const madinahHotel =
+    $("#madinahHotel", calculator);
+
+  const makkahNights =
+    $("#makkahNights", calculator);
+
+  const madinahNights =
+    $("#madinahNights", calculator);
+
+  const mutawwifDays =
+    $("#mutawwifDays", calculator);
+
+  const transportSelect =
+    $("#calcTransport", calculator);
+
+  const resultBreakdown =
+    $("#resultBreakdown", calculator);
+
+  const grandTotal =
+    $("#grandTotal", calculator);
+
+  const perPaxTotal =
+    $("#perPaxTotal", calculator);
+
+  const calculatorWhatsapp =
+    $("#calculatorWhatsapp", calculator);
+
+  const calculatorReset =
+    $("#calculatorReset", calculator);
+
+
+  /* =======================================================
+     CALCULATOR STATE
+  ======================================================= */
+
+  let calcState = {
+    mode: "mandiri",
+    pax: 2,
+    roomCapacity: 4,
+
+    services: {
+      visa: true,
+      hotel: true,
+      transport: true,
+      mutawwif: false,
+      handling: false,
+      ziarah: false
+    }
+  };
+
+
+  /* =======================================================
+     SELECTED VISA
+  ======================================================= */
+
+  function getVisaType() {
+    const selected =
+      $(
+        'input[name="visaType"]:checked',
+        calculator
+      );
+
+    return selected?.value || "only";
+  }
+
+
+  /* =======================================================
+     SERVICE PANELS
+  ======================================================= */
+
+  function updateServicePanels() {
+    const panels = {
+      visa: "#optionVisa",
+      hotel: "#optionHotel",
+      transport: "#optionTransport",
+      mutawwif: "#optionMutawwif",
+      handling: "#optionHandling",
+      ziarah: "#optionZiarah"
+    };
+
+    Object.entries(panels).forEach(
+      ([service, selector]) => {
+        const panel =
+          $(selector, calculator);
+
+        if (!panel) return;
+
+        panel.classList.toggle(
+          "active",
+          Boolean(calcState.services[service])
+        );
+      }
+    );
+  }
+
+
+  /* =======================================================
+     RESULT ROW
+  ======================================================= */
+
+  function createResultLine(
+    icon,
+    title,
+    description,
+    price,
+    pending = false
+  ) {
+    return `
+      <div class="result-line">
+
+        <div class="result-line-left">
+
+          <div class="result-line-icon">
+            <i class="${escapeHTML(icon)}"></i>
+          </div>
+
+          <div class="result-line-text">
+            <strong>${escapeHTML(title)}</strong>
+            <small>${escapeHTML(description)}</small>
+          </div>
+
+        </div>
+
+        <div class="result-line-price">
+          ${
+            pending
+              ? "Konfirmasi"
+              : money(price)
+          }
+        </div>
+
+      </div>
+    `;
+  }
+
+
+  /* =======================================================
+     CALCULATOR
+  ======================================================= */
+
+  function calculate() {
+    const pax =
+      Math.max(
+        1,
+        Number(calcState.pax) || 1
+      );
+
+    let total = 0;
+    let html = "";
+
+    const whatsappLines = [];
+
+
+    /* -----------------------
+       VISA
+    ----------------------- */
+
+    if (calcState.services.visa) {
+      const visaType =
+        getVisaType();
+
+      const visaPrice =
+        PRICES.visa[visaType] || 0;
+
+      const visaTotal =
+        visaPrice * pax;
+
+      const visaLabel =
+        visaType === "siskopatuh"
+          ? "Visa + Siskopatuh"
+          : "Visa Only";
+
+      total += visaTotal;
+
+      html += createResultLine(
+        "fa-solid fa-passport",
+        visaLabel,
+        `${pax} pax × ${money(visaPrice)}`,
+        visaTotal
+      );
+
+      whatsappLines.push(
+        `• ${visaLabel}: ${money(visaTotal)}`
+      );
+    }
+
+
+    /* -----------------------
+       HOTEL
+    ----------------------- */
+
+    if (calcState.services.hotel) {
+      const capacity =
+        Math.max(
+          1,
+          Number(calcState.roomCapacity) || 4
+        );
+
+      const rooms =
+        Math.ceil(pax / capacity);
+
+      const makkahPrice =
+        Number(makkahHotel?.value) || 0;
+
+      const makkahNightCount =
+        Math.max(
+          0,
+          Number(makkahNights?.value) || 0
+        );
+
+      const makkahTotal =
+        rooms *
+        makkahNightCount *
+        makkahPrice;
+
+      if (makkahNightCount > 0) {
+        total += makkahTotal;
+
+        html += createResultLine(
+          "fa-solid fa-hotel",
+          "Hotel Makkah",
+          `${rooms} kamar × ${makkahNightCount} malam × ${money(makkahPrice)}`,
+          makkahTotal
+        );
+
+        whatsappLines.push(
+          `• Hotel Makkah: ${rooms} kamar × ${makkahNightCount} malam = ${money(makkahTotal)}`
+        );
+      }
+
+
+      const madinahPrice =
+        Number(madinahHotel?.value) || 0;
+
+      const madinahNightCount =
+        Math.max(
+          0,
+          Number(madinahNights?.value) || 0
+        );
+
+      const madinahTotal =
+        rooms *
+        madinahNightCount *
+        madinahPrice;
+
+      if (madinahNightCount > 0) {
+        total += madinahTotal;
+
+        html += createResultLine(
+          "fa-solid fa-building",
+          "Hotel Madinah",
+          `${rooms} kamar × ${madinahNightCount} malam × ${money(madinahPrice)}`,
+          madinahTotal
+        );
+
+        whatsappLines.push(
+          `• Hotel Madinah: ${rooms} kamar × ${madinahNightCount} malam = ${money(madinahTotal)}`
+        );
+      }
+    }
+
+
+    /* -----------------------
+       TRANSPORT
+    ----------------------- */
+
+    if (
+      calcState.services.transport &&
+      transportSelect
+    ) {
+      const key =
+        transportSelect.value;
+
+      const item =
+        PRICES.transport[key];
+
+      if (item) {
+        const itemTotal =
+          item.type === "perPax"
+            ? item.price * pax
+            : item.price;
+
+        if (item.price > 0) {
+          total += itemTotal;
+
+          html += createResultLine(
+            "fa-solid fa-bus",
+            item.label,
+            item.type === "perPax"
+              ? `${pax} pax`
+              : "Biaya per group",
+            itemTotal
+          );
+
+          whatsappLines.push(
+            `• Transport ${item.label}: ${money(itemTotal)}`
+          );
+        } else {
+          html += createResultLine(
+            "fa-solid fa-bus",
+            item.label,
+            "Harga transport dikonfirmasi admin",
+            0,
+            true
+          );
+
+          whatsappLines.push(
+            `• Transport ${item.label}: Minta harga`
+          );
+        }
+      }
+    }
+
+
+    /* -----------------------
+       MUTAWIF
+    ----------------------- */
+
+    if (calcState.services.mutawwif) {
+      const days =
+        Math.max(
+          1,
+          Number(mutawwifDays?.value) || 1
+        );
+
+      const mutawwifTotal =
+        PRICES.mutawwifPerDay * days;
+
+      const mutawwifPerPax =
+        mutawwifTotal / pax;
+
+      total += mutawwifTotal;
+
+      html += createResultLine(
+        "fa-solid fa-user-group",
+        "Mutawwif",
+        `${days} hari • ${money(mutawwifPerPax)}/pax`,
+        mutawwifTotal
+      );
+
+      whatsappLines.push(
+        `• Mutawwif ${days} hari: ${money(mutawwifTotal)} (${money(mutawwifPerPax)}/pax)`
+      );
+    }
+
+
+    /* -----------------------
+       HANDLING
+    ----------------------- */
+
+    if (calcState.services.handling) {
+      const checked =
+        $$(
+          ".handling-addon:checked",
+          calculator
+        );
+
+      checked.forEach(input => {
+        const item =
+          PRICES.handling[input.value];
+
+        if (!item) return;
+
+        const itemTotal =
+          item.type === "perPax"
+            ? item.price * pax
+            : item.price;
+
+        if (item.price > 0) {
+          total += itemTotal;
+
+          html += createResultLine(
+            "fa-solid fa-suitcase-rolling",
+            item.label,
+            item.type === "perPax"
+              ? `${pax} pax`
+              : "Biaya per group",
+            itemTotal
+          );
+
+          whatsappLines.push(
+            `• ${item.label}: ${money(itemTotal)}`
+          );
+        } else {
+          html += createResultLine(
+            "fa-solid fa-suitcase-rolling",
+            item.label,
+            "Harga dikonfirmasi admin",
+            0,
+            true
+          );
+
+          whatsappLines.push(
+            `• ${item.label}: Minta harga`
+          );
+        }
+      });
+    }
+
+
+    /* -----------------------
+       ZIARAH
+    ----------------------- */
+
+    if (calcState.services.ziarah) {
+      const checked =
+        $$(
+          ".ziarah-addon:checked",
+          calculator
+        );
+
+      checked.forEach(input => {
+        const item =
+          PRICES.ziarah[input.value];
+
+        if (!item) return;
+
+        const itemTotal =
+          item.type === "perPax"
+            ? item.price * pax
+            : item.price;
+
+        if (item.price > 0) {
+          total += itemTotal;
+
+          html += createResultLine(
+            "fa-solid fa-location-dot",
+            item.label,
+            item.type === "perPax"
+              ? `${pax} pax`
+              : "Biaya program",
+            itemTotal
+          );
+
+          whatsappLines.push(
+            `• ${item.label}: ${money(itemTotal)}`
+          );
+        } else {
+          html += createResultLine(
+            "fa-solid fa-location-dot",
+            item.label,
+            "Harga dikonfirmasi admin",
+            0,
+            true
+          );
+
+          whatsappLines.push(
+            `• ${item.label}: Minta harga`
+          );
+        }
+      });
+    }
+
+
+    /* -----------------------
+       EMPTY
+    ----------------------- */
+
+    if (!html) {
+      html = `
+        <div style="
+          padding:28px 10px;
+          text-align:center;
+          color:rgba(255,255,255,.45);
+          font-size:10px;
+          line-height:1.7;
+        ">
+          Pilih layanan untuk melihat estimasi biaya.
+        </div>
+      `;
+    }
+
+
+    /* -----------------------
+       OUTPUT
+    ----------------------- */
+
+    if (resultBreakdown) {
+      resultBreakdown.innerHTML = html;
+    }
+
+    if (grandTotal) {
+      grandTotal.textContent =
+        money(total);
+    }
+
+    if (perPaxTotal) {
+      perPaxTotal.textContent =
+        money(total / pax);
+    }
+
+    if (resultPax) {
+      resultPax.textContent =
+        String(pax);
+    }
+
+    if (resultMode) {
+      resultMode.textContent =
+        calcState.mode === "group"
+          ? "LA Group"
+          : "Umrah Mandiri";
+    }
+
+    calculator.dataset.total =
+      String(total);
+
+    calculator.dataset.perPax =
+      String(total / pax);
+
+    calculator.dataset.quote =
+      JSON.stringify(whatsappLines);
+  }
+
+
+  /* =======================================================
+     PAX
+  ======================================================= */
+
+  function updatePax() {
+    if (calcState.mode === "mandiri") {
+      calcState.pax =
+        Math.min(
+          9,
+          Math.max(1, calcState.pax)
+        );
+    } else {
+      calcState.pax =
+        Math.min(
+          100,
+          Math.max(10, calcState.pax)
+        );
+    }
+
+    if (paxDisplay) {
+      paxDisplay.textContent =
+        String(calcState.pax);
+    }
+
+    if (resultPax) {
+      resultPax.textContent =
+        String(calcState.pax);
+    }
+
+    calculate();
+  }
+
+  paxMinus?.addEventListener("click", () => {
+    calcState.pax--;
+    updatePax();
+  });
+
+  paxPlus?.addEventListener("click", () => {
+    calcState.pax++;
+    updatePax();
+  });
+
+
+  /* =======================================================
+     MODE
+  ======================================================= */
+
+  modeButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      modeButtons.forEach(item => {
+        item.classList.remove("active");
+      });
+
+      button.classList.add("active");
+
+      calcState.mode =
+        button.dataset.mode || "mandiri";
+
+      if (
+        calcState.mode === "group" &&
+        calcState.pax < 10
+      ) {
+        calcState.pax = 10;
+      }
+
+      if (
+        calcState.mode === "mandiri" &&
+        calcState.pax > 9
+      ) {
+        calcState.pax = 2;
+      }
+
+      updatePax();
+    });
+  });
+
+
+  /* =======================================================
+     SERVICE SELECTOR
+  ======================================================= */
+
+  serviceButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      const service =
+        button.dataset.calcService;
+
+      if (
+        !service ||
+        !(service in calcState.services)
+      ) {
+        return;
+      }
+
+      calcState.services[service] =
+        !calcState.services[service];
+
+      button.classList.toggle(
+        "active",
+        calcState.services[service]
+      );
+
+      updateServicePanels();
+      calculate();
+    });
+  });
+
+
+  /* =======================================================
+     ROOM TYPE
+  ======================================================= */
+
+  roomButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      roomButtons.forEach(item => {
+        item.classList.remove("active");
+      });
+
+      button.classList.add("active");
+
+      calcState.roomCapacity =
+        Number(
+          button.dataset.capacity
+        ) || 4;
+
+      calculate();
+    });
+  });
+
+
+  /* =======================================================
+     MINI COUNTERS
+  ======================================================= */
+
+  $$(
+    "[data-counter-minus]",
+    calculator
+  ).forEach(button => {
+    button.addEventListener("click", () => {
+      const id =
+        button.dataset.counterMinus;
+
+      const input =
+        id
+          ? $(`#${id}`, calculator)
+          : null;
+
+      if (!input) return;
+
+      const minimum =
+        Number(input.min || 0);
+
+      const current =
+        Number(input.value || 0);
+
+      input.value =
+        Math.max(
+          minimum,
+          current - 1
+        );
+
+      calculate();
+    });
+  });
+
+  $$(
+    "[data-counter-plus]",
+    calculator
+  ).forEach(button => {
+    button.addEventListener("click", () => {
+      const id =
+        button.dataset.counterPlus;
+
+      const input =
+        id
+          ? $(`#${id}`, calculator)
+          : null;
+
+      if (!input) return;
+
+      const maximum =
+        Number(input.max || 999);
+
+      const current =
+        Number(input.value || 0);
+
+      input.value =
+        Math.min(
+          maximum,
+          current + 1
+        );
+
+      calculate();
+    });
+  });
+
+
+  /* =======================================================
+     INPUT CHANGES
+  ======================================================= */
+
+  $$(
+    "select, input",
+    calculator
+  ).forEach(input => {
+    input.addEventListener(
+      "change",
+      calculate
+    );
+
+    input.addEventListener(
+      "input",
+      calculate
+    );
+  });
+
+
+  /* =======================================================
+     RESET CALCULATOR
+  ======================================================= */
+
+  calculatorReset?.addEventListener(
+    "click",
+    () => {
+      calcState = {
+        mode: "mandiri",
+        pax: 2,
+        roomCapacity: 4,
+
+        services: {
+          visa: true,
+          hotel: true,
+          transport: true,
+          mutawwif: false,
+          handling: false,
+          ziarah: false
+        }
+      };
+
+      modeButtons.forEach(button => {
+        button.classList.toggle(
+          "active",
+          button.dataset.mode === "mandiri"
+        );
+      });
+
+      serviceButtons.forEach(button => {
+        const service =
+          button.dataset.calcService;
+
+        button.classList.toggle(
+          "active",
+          Boolean(
+            calcState.services[service]
+          )
+        );
+      });
+
+      roomButtons.forEach(button => {
+        button.classList.toggle(
+          "active",
+          Number(button.dataset.capacity) === 4
+        );
+      });
+
+      const visaOnly =
+        $(
+          'input[name="visaType"][value="only"]',
+          calculator
+        );
+
+      if (visaOnly) {
+        visaOnly.checked = true;
+      }
+
+      if (makkahNights) {
+        makkahNights.value = 5;
+      }
+
+      if (madinahNights) {
+        madinahNights.value = 4;
+      }
+
+      if (mutawwifDays) {
+        mutawwifDays.value = 1;
+      }
+
+      if (transportSelect) {
+        transportSelect.value = "shared";
+      }
+
+      updateServicePanels();
+      updatePax();
+
+      showToast(
+        "Kalkulator berhasil di-reset."
+      );
+    }
+  );
+
+
+  /* =======================================================
+     CALCULATOR WHATSAPP
+  ======================================================= */
+
+  calculatorWhatsapp?.addEventListener(
+    "click",
+    () => {
+      let quote = [];
+
+      try {
+        quote =
+          JSON.parse(
+            calculator.dataset.quote || "[]"
+          );
+      } catch {
+        quote = [];
+      }
+
+      const total =
+        Number(
+          calculator.dataset.total || 0
+        );
+
+      const perPax =
+        Number(
+          calculator.dataset.perPax || 0
+        );
+
+      const message = [
+        "Assalamu'alaikum Safeera,",
+        "",
+        "Saya ingin meminta penawaran Umrah.",
+        "",
+        `Tipe perjalanan: ${
+          calcState.mode === "group"
+            ? "LA Group"
+            : "Umrah Mandiri"
+        }`,
+        `Jumlah jamaah: ${calcState.pax} pax`,
+        "",
+        "Rincian:",
+        ...quote,
+        "",
+        `TOTAL ESTIMASI: ${money(total)}`,
+        `ESTIMASI / PAX: ${money(perPax)}`,
+        "",
+        "Mohon dibantu cek harga final dan ketersediaannya.",
+        "Terima kasih."
+      ].join("\n");
+
+      openWhatsApp(message);
+    }
+  );
+
+
+  /* =======================================================
+     INITIALIZE CALCULATOR
+  ======================================================= */
+
+  updateServicePanels();
+  updatePax();
+
+  console.log(
+    "Safeera website & Smart Calculator V2 loaded."
+  );
+
+});
