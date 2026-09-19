@@ -5235,3 +5235,1245 @@ h4 {
   }
 
 }
+
+/* ==========================================================
+   SAFEERA — SMART CALCULATOR V2
+   Paste at the END of style.css
+========================================================== */
+
+.calculator-section {
+    position: relative;
+    overflow: visible;
+    padding: 110px 0;
+    background:
+        radial-gradient(circle at 10% 10%, rgba(196, 158, 88, .08), transparent 32%),
+        linear-gradient(180deg, #f7f5ef 0%, #ffffff 100%);
+}
+
+
+/* ==========================================================
+   HEADING
+========================================================== */
+
+.calculator-v2-heading {
+    max-width: 760px;
+    margin: 0 auto 55px;
+    text-align: center;
+}
+
+.calculator-v2-heading .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    color: #a98543;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .18em;
+}
+
+.calculator-v2-heading h2 {
+    margin: 0;
+    color: #0b2923;
+    font-family: "Playfair Display", serif;
+    font-size: clamp(36px, 5vw, 58px);
+    line-height: 1.05;
+    letter-spacing: -.025em;
+}
+
+.calculator-v2-heading h2 span {
+    color: #b68a42;
+}
+
+.calculator-v2-heading p {
+    max-width: 640px;
+    margin: 20px auto 0;
+    color: #6e756f;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+
+/* ==========================================================
+   MAIN LAYOUT
+========================================================== */
+
+.calc-v2-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(330px, .65fr);
+    gap: 28px;
+    align-items: start;
+}
+
+
+/* ==========================================================
+   LEFT BUILDER
+========================================================== */
+
+.calc-v2-builder {
+    padding: 34px;
+    border: 1px solid rgba(11, 41, 35, .09);
+    border-radius: 28px;
+    background: rgba(255, 255, 255, .94);
+    box-shadow:
+        0 30px 80px rgba(11, 41, 35, .08);
+}
+
+
+/* ==========================================================
+   STEP
+========================================================== */
+
+.calc-step {
+    padding: 0 0 32px;
+    margin: 0 0 32px;
+    border-bottom: 1px solid #eceae3;
+}
+
+.calc-step-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+.calc-step-number {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #0d3a31;
+    color: #e4bf78;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .08em;
+}
+
+.calc-step-head h3 {
+    margin: 1px 0 5px;
+    color: #102d27;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.calc-step-head p {
+    margin: 0;
+    color: #8a8f8c;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+
+/* ==========================================================
+   TRAVEL MODE
+========================================================== */
+
+.calc-mode-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 13px;
+}
+
+.calc-mode {
+    min-height: 88px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-align: left;
+    border: 1px solid #e4e5df;
+    border-radius: 18px;
+    background: #fff;
+    color: #223c36;
+    cursor: pointer;
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        background .2s ease,
+        box-shadow .2s ease;
+}
+
+.calc-mode:hover {
+    transform: translateY(-2px);
+    border-color: rgba(181, 138, 66, .45);
+    box-shadow: 0 12px 30px rgba(11, 41, 35, .08);
+}
+
+.calc-mode > i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 46px;
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    background: #f2f4f0;
+    color: #27594d;
+    font-size: 18px;
+}
+
+.calc-mode span {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.calc-mode strong {
+    color: inherit;
+    font-size: 14px;
+}
+
+.calc-mode small {
+    color: #949995;
+    font-size: 11px;
+}
+
+.calc-mode.active {
+    border-color: #1c5b4e;
+    background: #103b32;
+    color: #fff;
+    box-shadow: 0 16px 34px rgba(11, 41, 35, .17);
+}
+
+.calc-mode.active > i {
+    background: rgba(255, 255, 255, .1);
+    color: #e6c47f;
+}
+
+.calc-mode.active small {
+    color: rgba(255, 255, 255, .62);
+}
+
+
+/* ==========================================================
+   PAX COUNTER
+========================================================== */
+
+.pax-control {
+    max-width: 430px;
+    display: grid;
+    grid-template-columns: 76px 1fr 76px;
+    align-items: stretch;
+    overflow: hidden;
+    border: 1px solid #e3e5df;
+    border-radius: 19px;
+    background: #f8f8f5;
+}
+
+.pax-control button {
+    min-height: 82px;
+    border: 0;
+    background: transparent;
+    color: #214d43;
+    font-size: 27px;
+    cursor: pointer;
+    transition: background .2s ease;
+}
+
+.pax-control button:hover {
+    background: #eef1ec;
+}
+
+.pax-number {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #e4e5df;
+    border-left: 1px solid #e4e5df;
+}
+
+.pax-number strong {
+    color: #0d332b;
+    font-family: "Playfair Display", serif;
+    font-size: 31px;
+    line-height: 1;
+}
+
+.pax-number span {
+    margin-top: 6px;
+    color: #979b98;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+}
+
+
+/* ==========================================================
+   SERVICE SELECTOR
+========================================================== */
+
+.service-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 11px;
+}
+
+.calc-service {
+    position: relative;
+    min-height: 105px;
+    padding: 18px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 9px;
+    overflow: hidden;
+    border: 1px solid #e4e5df;
+    border-radius: 17px;
+    background: #fff;
+    color: #60706b;
+    cursor: pointer;
+    transition:
+        transform .2s ease,
+        background .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.calc-service:hover {
+    transform: translateY(-2px);
+    border-color: rgba(24, 82, 70, .35);
+    box-shadow: 0 12px 26px rgba(11, 41, 35, .07);
+}
+
+.calc-service > i {
+    color: #315e54;
+    font-size: 20px;
+}
+
+.calc-service strong {
+    color: #213d36;
+    font-size: 13px;
+}
+
+.service-check {
+    position: absolute;
+    top: 11px;
+    right: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 21px;
+    height: 21px;
+    border: 1px solid #d8ddd9;
+    border-radius: 50%;
+    background: #fff;
+    color: transparent;
+    font-size: 9px;
+}
+
+.calc-service.active {
+    border-color: #1c5b4e;
+    background:
+        linear-gradient(145deg, #f3f8f5, #fff);
+    box-shadow: inset 0 0 0 1px rgba(28, 91, 78, .04);
+}
+
+.calc-service.active > i,
+.calc-service.active strong {
+    color: #0e493d;
+}
+
+.calc-service.active .service-check {
+    border-color: #1b5c4e;
+    background: #1b5c4e;
+    color: #fff;
+}
+
+
+/* ==========================================================
+   SERVICE OPTIONS
+========================================================== */
+
+.calc-options {
+    display: none;
+    margin: 0 0 18px;
+    padding: 25px;
+    border: 1px solid #e6e7e2;
+    border-radius: 21px;
+    background:
+        linear-gradient(145deg, #fafbf8, #fff);
+}
+
+.calc-options.active {
+    display: block;
+    animation: safeeraCalcOpen .3s ease;
+}
+
+@keyframes safeeraCalcOpen {
+    from {
+        opacity: 0;
+        transform: translateY(-7px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.option-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.option-title > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.option-title span {
+    margin-bottom: 3px;
+    color: #b08b4e;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .18em;
+}
+
+.option-title h4 {
+    margin: 0;
+    color: #12372f;
+    font-size: 18px;
+}
+
+.option-title > i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 41px;
+    height: 41px;
+    border-radius: 12px;
+    background: #edf2ee;
+    color: #1d5c4f;
+}
+
+
+/* ==========================================================
+   RADIO CARDS
+========================================================== */
+
+.option-card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 11px;
+}
+
+.radio-card,
+.addon-card {
+    position: relative;
+    min-height: 74px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid #e1e4df;
+    border-radius: 15px;
+    background: #fff;
+    cursor: pointer;
+    transition:
+        border-color .2s ease,
+        background .2s ease,
+        box-shadow .2s ease;
+}
+
+.radio-card:hover,
+.addon-card:hover {
+    border-color: #96b1aa;
+}
+
+.radio-card input,
+.addon-card input {
+    accent-color: #155447;
+}
+
+.radio-circle {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    border: 2px solid #cfd6d2;
+    border-radius: 50%;
+    background: #fff;
+}
+
+.radio-card:has(input:checked) {
+    border-color: #1c5b4e;
+    background: #f3f8f5;
+    box-shadow: inset 0 0 0 1px rgba(28, 91, 78, .06);
+}
+
+.radio-card:has(input:checked) .radio-circle {
+    border: 5px solid #1c5b4e;
+}
+
+.radio-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.radio-card span:last-child,
+.addon-card span {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.radio-card strong,
+.addon-card strong {
+    color: #183d34;
+    font-size: 12px;
+}
+
+.radio-card small,
+.addon-card small {
+    color: #929894;
+    font-size: 10px;
+}
+
+
+/* ==========================================================
+   HOTEL CALCULATOR
+========================================================== */
+
+.hotel-calc-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 13px;
+}
+
+.hotel-calc-box {
+    padding: 18px;
+    border: 1px solid #e2e5e0;
+    border-radius: 17px;
+    background: #fff;
+}
+
+.hotel-calc-city {
+    padding-bottom: 13px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eff0ed;
+}
+
+.hotel-calc-city span {
+    display: block;
+    margin-bottom: 4px;
+    color: #b18b4b;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .14em;
+}
+
+.hotel-calc-city strong {
+    color: #173c33;
+    font-size: 14px;
+}
+
+.hotel-calc-box label,
+.full-input {
+    display: block;
+    margin-top: 14px;
+    color: #777f7a;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .03em;
+}
+
+.hotel-calc-box select,
+.full-input select {
+    width: 100%;
+    min-height: 48px;
+    margin-top: 7px;
+    padding: 0 13px;
+    border: 1px solid #dfe3de;
+    border-radius: 11px;
+    outline: none;
+    background: #f8f9f6;
+    color: #24463e;
+    font-family: inherit;
+    font-size: 11px;
+}
+
+.hotel-calc-box select:focus,
+.full-input select:focus {
+    border-color: #397366;
+    box-shadow: 0 0 0 3px rgba(34, 101, 87, .08);
+}
+
+
+/* ==========================================================
+   MINI COUNTER
+========================================================== */
+
+.mini-counter {
+    display: grid;
+    grid-template-columns: 44px 1fr 44px;
+    min-height: 48px;
+    margin-top: 7px;
+    overflow: hidden;
+    border: 1px solid #dfe3de;
+    border-radius: 11px;
+    background: #f8f9f6;
+}
+
+.mini-counter button {
+    border: 0;
+    background: transparent;
+    color: #28594e;
+    font-size: 19px;
+    cursor: pointer;
+}
+
+.mini-counter button:hover {
+    background: #e9efeb;
+}
+
+.mini-counter input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    border-right: 1px solid #dfe3de;
+    border-left: 1px solid #dfe3de;
+    outline: none;
+    background: transparent;
+    color: #143b32;
+    text-align: center;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.mini-counter input::-webkit-outer-spin-button,
+.mini-counter input::-webkit-inner-spin-button {
+    margin: 0;
+    -webkit-appearance: none;
+}
+
+
+/* ==========================================================
+   ROOM TYPE
+========================================================== */
+
+.room-type-area {
+    margin-top: 20px;
+}
+
+.input-label {
+    display: block;
+    margin-bottom: 9px;
+    color: #777f7a;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.room-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 9px;
+}
+
+.room-type {
+    min-height: 58px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    border: 1px solid #e0e3df;
+    border-radius: 12px;
+    background: #fff;
+    color: #53635e;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.room-type small {
+    color: #9aa09c;
+    font-size: 8px;
+    font-weight: 500;
+}
+
+.room-type.active {
+    border-color: #1b5b4e;
+    background: #155044;
+    color: #fff;
+}
+
+.room-type.active small {
+    color: rgba(255, 255, 255, .65);
+}
+
+.room-note {
+    margin: 10px 0 0;
+    color: #9a9e9b;
+    font-size: 9px;
+    line-height: 1.5;
+}
+
+
+/* ==========================================================
+   TRANSPORT ROUTE
+========================================================== */
+
+.route-list {
+    display: grid;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.route-list div {
+    min-height: 44px;
+    padding: 10px 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #e7e9e5;
+    border-radius: 11px;
+    background: #fff;
+    color: #66736f;
+    font-size: 10px;
+}
+
+.route-list i {
+    width: 21px;
+    color: #2b695c;
+    text-align: center;
+}
+
+
+/* ==========================================================
+   MUTAWIF
+========================================================== */
+
+.group-price-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.group-price-info > div {
+    min-height: 100px;
+    padding: 16px;
+    border: 1px solid #e3e6e1;
+    border-radius: 15px;
+    background: #fff;
+}
+
+.group-price-info > div:first-child {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.group-price-info span {
+    display: block;
+    margin-bottom: 5px;
+    color: #8b928e;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+}
+
+.group-price-info strong {
+    color: #153e34;
+    font-family: "Playfair Display", serif;
+    font-size: 22px;
+}
+
+.group-price-info small {
+    color: #9b9f9d;
+    font-size: 9px;
+}
+
+.calc-hint {
+    margin: 12px 0 0;
+    padding: 11px 13px;
+    border-radius: 10px;
+    background: #f2f5f1;
+    color: #78817c;
+    font-size: 9px;
+    line-height: 1.6;
+}
+
+
+/* ==========================================================
+   ADDONS
+========================================================== */
+
+.addon-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.addon-card input {
+    flex: 0 0 auto;
+    width: 17px;
+    height: 17px;
+}
+
+
+/* ==========================================================
+   DISCLAIMER
+========================================================== */
+
+.calc-disclaimer {
+    margin-top: 24px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    border: 1px solid rgba(181, 138, 66, .2);
+    border-radius: 14px;
+    background: #fcfaf4;
+}
+
+.calc-disclaimer i {
+    margin-top: 2px;
+    color: #b18a48;
+}
+
+.calc-disclaimer p {
+    margin: 0;
+    color: #777970;
+    font-size: 9px;
+    line-height: 1.7;
+}
+
+
+/* ==========================================================
+   RIGHT RESULT PANEL
+========================================================== */
+
+.calc-v2-result {
+    position: sticky;
+    top: 105px;
+    overflow: hidden;
+    padding: 29px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 25px;
+    background:
+        radial-gradient(circle at 90% 10%, rgba(210, 172, 99, .12), transparent 27%),
+        linear-gradient(155deg, #123f35 0%, #08271f 100%);
+    color: #fff;
+    box-shadow:
+        0 35px 80px rgba(7, 35, 29, .24);
+}
+
+.calc-v2-result::before {
+    content: "";
+    position: absolute;
+    width: 230px;
+    height: 230px;
+    right: -120px;
+    bottom: -100px;
+    border: 1px solid rgba(215, 181, 113, .09);
+    border-radius: 50%;
+}
+
+.result-top {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, .1);
+}
+
+.result-top > span {
+    color: #d9b66d;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .18em;
+}
+
+.result-status {
+    padding: 6px 9px;
+    border: 1px solid rgba(122, 213, 171, .16);
+    border-radius: 100px;
+    background: rgba(72, 169, 126, .1);
+    color: #8ed3af;
+    font-size: 7px;
+    font-weight: 800;
+    letter-spacing: .13em;
+}
+
+.result-status::before {
+    content: "";
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin-right: 5px;
+    border-radius: 50%;
+    background: #69c695;
+    box-shadow: 0 0 9px #69c695;
+}
+
+
+/* ==========================================================
+   RESULT TRIP
+========================================================== */
+
+.result-trip {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 20px 0;
+}
+
+.result-trip > div {
+    padding: 13px;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, .055);
+}
+
+.result-trip small {
+    display: block;
+    margin-bottom: 6px;
+    color: rgba(255, 255, 255, .42);
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: .11em;
+}
+
+.result-trip strong {
+    color: #fff;
+    font-size: 11px;
+}
+
+
+/* ==========================================================
+   RESULT BREAKDOWN
+========================================================== */
+
+.result-breakdown {
+    position: relative;
+    z-index: 1;
+    min-height: 140px;
+    padding: 9px 0 17px;
+}
+
+.result-line {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, .06);
+}
+
+.result-line:last-child {
+    border-bottom: 0;
+}
+
+.result-line-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+}
+
+.result-line-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .06);
+    color: #d7b36d;
+    font-size: 10px;
+}
+
+.result-line-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.result-line-text strong {
+    color: rgba(255, 255, 255, .88);
+    font-size: 10px;
+}
+
+.result-line-text small {
+    margin-top: 3px;
+    color: rgba(255, 255, 255, .38);
+    font-size: 7px;
+    line-height: 1.4;
+}
+
+.result-line-price {
+    padding-top: 5px;
+    color: rgba(255, 255, 255, .8);
+    font-size: 9px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   TOTAL
+========================================================== */
+
+.result-total {
+    position: relative;
+    z-index: 1;
+    margin-top: 5px;
+    padding: 20px 0 16px;
+    border-top: 1px solid rgba(218, 180, 105, .25);
+}
+
+.result-total span,
+.result-per-pax span {
+    display: block;
+    margin-bottom: 6px;
+    color: rgba(255, 255, 255, .42);
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .13em;
+}
+
+.result-total strong {
+    display: block;
+    color: #e5be70;
+    font-family: "Playfair Display", serif;
+    font-size: clamp(27px, 3vw, 38px);
+    line-height: 1;
+}
+
+.result-per-pax {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 17px;
+    padding: 14px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .05);
+}
+
+.result-per-pax strong {
+    color: #fff;
+    font-size: 15px;
+}
+
+.result-note {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 17px;
+    color: rgba(255, 255, 255, .38);
+    font-size: 8px;
+    line-height: 1.6;
+}
+
+
+/* ==========================================================
+   RESULT BUTTONS
+========================================================== */
+
+.result-wa-button,
+.result-reset-button {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    min-height: 50px;
+    border-radius: 13px;
+    font-family: inherit;
+    font-weight: 800;
+    cursor: pointer;
+    transition:
+        transform .2s ease,
+        background .2s ease;
+}
+
+.result-wa-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    border: 0;
+    background: #d9b46c;
+    color: #0b2c25;
+    font-size: 11px;
+}
+
+.result-wa-button i {
+    font-size: 16px;
+}
+
+.result-wa-button:hover {
+    transform: translateY(-2px);
+    background: #e6c47f;
+}
+
+.result-reset-button {
+    margin-top: 8px;
+    border: 1px solid rgba(255, 255, 255, .12);
+    background: transparent;
+    color: rgba(255, 255, 255, .55);
+    font-size: 9px;
+}
+
+.result-reset-button:hover {
+    background: rgba(255, 255, 255, .06);
+    color: #fff;
+}
+
+
+/* ==========================================================
+   FOCUS
+========================================================== */
+
+.calc-mode:focus-visible,
+.calc-service:focus-visible,
+.room-type:focus-visible,
+.pax-control button:focus-visible,
+.mini-counter button:focus-visible,
+.result-wa-button:focus-visible,
+.result-reset-button:focus-visible {
+    outline: 3px solid rgba(207, 169, 95, .35);
+    outline-offset: 2px;
+}
+
+
+/* ==========================================================
+   TABLET
+========================================================== */
+
+@media (max-width: 1050px) {
+
+    .calc-v2-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .calc-v2-result {
+        position: relative;
+        top: auto;
+        max-width: none;
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 720px) {
+
+    .calculator-section {
+        padding: 75px 0;
+    }
+
+    .calculator-v2-heading {
+        margin-bottom: 35px;
+        text-align: left;
+    }
+
+    .calculator-v2-heading h2 {
+        font-size: 37px;
+    }
+
+    .calculator-v2-heading p {
+        margin-left: 0;
+        font-size: 13px;
+    }
+
+    .calc-v2-builder {
+        padding: 20px;
+        border-radius: 21px;
+    }
+
+    .calc-mode-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .service-selector {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .hotel-calc-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .option-card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .addon-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .group-price-info {
+        grid-template-columns: 1fr;
+    }
+
+    .calc-options {
+        padding: 18px;
+    }
+
+    .calc-v2-result {
+        padding: 23px;
+        border-radius: 21px;
+    }
+
+}
+
+
+/* ==========================================================
+   SMALL MOBILE
+========================================================== */
+
+@media (max-width: 430px) {
+
+    .service-selector {
+        gap: 8px;
+    }
+
+    .calc-service {
+        min-height: 92px;
+        padding: 13px;
+    }
+
+    .pax-control {
+        max-width: 100%;
+        grid-template-columns: 64px 1fr 64px;
+    }
+
+    .room-buttons {
+        gap: 6px;
+    }
+
+    .result-trip {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/* ==========================================================
+   VERY SMALL MOBILE
+========================================================== */
+
+@media (max-width: 360px) {
+
+    .service-selector {
+        grid-template-columns: 1fr;
+    }
+
+    .room-buttons {
+        grid-template-columns: 1fr;
+    }
+
+}
